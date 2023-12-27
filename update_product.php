@@ -1,31 +1,43 @@
 <?php
+// update_product.php
+
 require_once 'db.php';
 
-if (isset($_POST['product_id'])) {
-  // Recoge los valores del formulario
-  $nombre_px = $_POST['nombre_px'];
-  // Repite para los otros campos
-  $product_id = $_POST['product_id'];
+// Verifica si el formulario ha sido enviado
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Obtén los datos del formulario
+    $id_producto = $_POST['id_producto'];
+    $nombre_px = $_POST['nombre_px'];
+    $precio = $_POST['precio'];
+    $id_categoria = $_POST['id_categoria'];
+    $stock = $_POST['stock'];
 
-  // Prepara la sentencia de actualización
-  if ($stmt = $conn->prepare("UPDATE productos SET nombre_px = ?, precio = ?, id_categoria = ?, stock = ? WHERE id = ? AND id_usuario = ?")) {
-    // Vincula los parámetros y ejecuta
-    $stmt->bind_param("ssddii", $nombre_px, $precio, $id_categoria, $stock, $product_id, $_SESSION['id']);
-    $stmt->execute();
+    // Prepara la consulta de actualización
+    $query = "UPDATE productos SET nombre_px = ?, precio = ?, id_categoria = ?, stock = ? WHERE id_producto = ?";
 
-    if ($stmt->affected_rows > 0) {
-      echo "Producto actualizado.";
+    // Prepara la sentencia
+    if ($stmt = $conn->prepare($query)) {
+        // Vincula los parámetros
+        $stmt->bind_param("ssiii", $nombre_px, $precio, $id_categoria, $stock, $id_producto);
+
+        // Ejecuta la consulta
+        if ($stmt->execute()) {
+            // Redirige de nuevo a la página principal o muestra un mensaje de éxito
+            header("Location: welcome.php?update_success=true");
+            exit;
+        } else {
+            // Manejo del error
+            echo "Error al actualizar el producto: " . $conn->error;
+        }
+
+        // Cierra la sentencia
+        $stmt->close();
     } else {
-      echo "No se pudo actualizar el producto o no hubo cambios.";
+        // Manejo del error
+        echo "Error al preparar la consulta: " . $conn->error;
     }
-
-    $stmt->close();
-  } else {
-    echo "Error al preparar la consulta: " . $conn->error;
-  }
-
-  $conn->close();
-} else {
-  echo "ID del producto no proporcionado.";
 }
+
+// Cierra la conexión
+$conn->close();
 ?>

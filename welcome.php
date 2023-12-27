@@ -54,7 +54,7 @@ require_once 'db.php';
 <div class="container-fluid">
   <div class="row">
     <?php include 'sidebar.php'; ?>
-    <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+    <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-md-4">
     <!-- Verifica si el parámetro 'page' se ha pasado a través de GET y si es igual a 'products' -->
     <?php if (isset($_GET['page']) && $_GET['page'] == 'products') {
         include 'product_stock.php'; 
