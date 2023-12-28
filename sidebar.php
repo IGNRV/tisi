@@ -6,6 +6,9 @@
     <li class="nav-item">
       <a href="welcome.php?page=products" class="nav-link text-white">Productos</a>
     </li>
+    <li class="nav-item">
+      <a href="welcome.php?page=categorias" class="nav-link text-white">Categorias</a>
+    </li>
     <!-- Más elementos del sidebar aquí según sea necesario -->
   </ul>
 </div>
