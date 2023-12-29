@@ -15,7 +15,7 @@ if (isset($_GET['id'])) {
         // Ejecuta la consulta
         if ($stmt->execute()) {
             // Redirige de nuevo a la página principal o muestra un mensaje de éxito
-            header("Location: welcome.php?delete_success=true");
+            header("Location: welcome.php?page=products&update_success=true");
             exit;
         } else {
             // Manejo del error
