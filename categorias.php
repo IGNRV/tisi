@@ -3,39 +3,47 @@
 require_once 'db.php';
 session_start();
 
-// Variable para almacenar el mensaje de éxito
 $mensaje_exito = '';
 
 if (isset($_SESSION['id'])) {
     $id_usuario = $_SESSION['id'];
 
-    // Procesar el formulario de edición si se ha enviado
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_categoria'], $_POST['nombre_categoria'])) {
-        $id_categoria = $_POST['id_categoria'];
-        $nuevo_nombre = $_POST['nombre_categoria'];
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_POST['id_categoria'], $_POST['nombre_categoria'])) {
+            $id_categoria = $_POST['id_categoria'];
+            $nuevo_nombre = $_POST['nombre_categoria'];
 
-        // Consulta para actualizar la categoría
-        $update_query = "UPDATE categorias SET nombre_categoria = ? WHERE id_categoria = ? AND id_usuario = ?";
-        if ($update_stmt = $conn->prepare($update_query)) {
-            $update_stmt->bind_param("sii", $nuevo_nombre, $id_categoria, $id_usuario);
-            if ($update_stmt->execute()) {
-                // Establecer el mensaje de éxito
-                $mensaje_exito = 'Categoría actualizada con éxito.';
+            $update_query = "UPDATE categorias SET nombre_categoria = ? WHERE id_categoria = ? AND id_usuario = ?";
+            if ($update_stmt = $conn->prepare($update_query)) {
+                $update_stmt->bind_param("sii", $nuevo_nombre, $id_categoria, $id_usuario);
+                if ($update_stmt->execute()) {
+                    $mensaje_exito = 'Categoría actualizada con éxito.';
+                }
+                $update_stmt->close();
+            } else {
+                echo "Error al preparar la consulta de actualización: " . $conn->error;
             }
-            $update_stmt->close();
-        } else {
-            echo "Error al preparar la consulta de actualización: " . $conn->error;
+        } elseif (isset($_POST['nueva_categoria'])) {
+            $nueva_categoria = $_POST['nueva_categoria'];
+            $insert_query = "INSERT INTO categorias (nombre_categoria, id_usuario) VALUES (?, ?)";
+            if ($insert_stmt = $conn->prepare($insert_query)) {
+                $insert_stmt->bind_param("si", $nueva_categoria, $id_usuario);
+                if ($insert_stmt->execute()) {
+                    $mensaje_exito = 'Categoría agregada con éxito.';
+                }
+                $insert_stmt->close();
+            } else {
+                echo "Error al preparar la consulta de inserción: " . $conn->error;
+            }
         }
     }
 
-    // Consulta para obtener las categorías del usuario
     $query = "SELECT id_categoria, nombre_categoria FROM categorias WHERE id_usuario = ?";
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("i", $id_usuario);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Mostrar el mensaje de éxito si está establecido
         if ($mensaje_exito != '') {
             echo "<p class='alert alert-success'>" . $mensaje_exito . "</p>";
         }
@@ -48,11 +56,10 @@ if (isset($_SESSION['id'])) {
             }
             echo '</select>';
             echo '</div>';
-        
-            // Botón para abrir el modal de edición
-            echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal">Editar</button>';
 
-            // Modal para editar la categoría
+            echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal">Editar</button>';
+            echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategoryModal">Agregar categoría</button>';
+
             echo '
             <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
@@ -79,6 +86,32 @@ if (isset($_SESSION['id'])) {
                 </div>
               </div>
             </div>';
+
+            echo '
+            <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">Agregar Nueva Categoría</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="addCategoryForm" method="post">
+                      <div class="form-group">
+                        <label for="newCategoryName">Nombre de la Nueva Categoría</label>
+                        <input type="text" class="form-control" id="newCategoryName" name="nueva_categoria">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success">Agregar</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>';
         } else {
             echo 'No hay categorías disponibles.';
         }
@@ -95,6 +128,7 @@ $conn->close();
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var editButton = document.querySelector('button[data-target="#editCategoryModal"]');
+    var addButton = document.querySelector('button[data-target="#addCategoryModal"]');
     var categorySelect = document.querySelector('#categoriaSelect');
     var categoryNameInput = document.querySelector('#categoryName');
     var categoryIdInput = document.querySelector('#categoryId');
@@ -105,9 +139,17 @@ document.addEventListener('DOMContentLoaded', function() {
         categoryIdInput.value = selectedOption.value;
     });
 
-    // Añadir un event listener para el formulario de edición
+    addButton.addEventListener('click', function() {
+        // Restablecer el formulario de agregar categoría
+        document.getElementById('newCategoryName').value = '';
+    });
+
     document.getElementById('editCategoryForm').addEventListener('submit', function(event) {
-        // Aquí puedes añadir cualquier lógica adicional que necesites ejecutar cuando se envía el formulario
+        // Lógica para el formulario de edición
+    });
+
+    document.getElementById('addCategoryForm').addEventListener('submit', function(event) {
+        // Lógica para el formulario de agregar categoría
     });
 });
 </script>
