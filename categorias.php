@@ -35,6 +35,18 @@ if (isset($_SESSION['id'])) {
             } else {
                 echo "Error al preparar la consulta de inserción: " . $conn->error;
             }
+        } elseif (isset($_POST['eliminar_categoria'])) {
+            $id_categoria_eliminar = $_POST['eliminar_categoria'];
+            $delete_query = "DELETE FROM categorias WHERE id_categoria = ? AND id_usuario = ?";
+            if ($delete_stmt = $conn->prepare($delete_query)) {
+                $delete_stmt->bind_param("ii", $id_categoria_eliminar, $id_usuario);
+                if ($delete_stmt->execute()) {
+                    $mensaje_exito = 'Categoría eliminada con éxito.';
+                }
+                $delete_stmt->close();
+            } else {
+                echo "Error al preparar la consulta de eliminación: " . $conn->error;
+            }
         }
     }
 
@@ -78,6 +90,7 @@ if (isset($_SESSION['id'])) {
                         <input type="hidden" id="categoryId" name="id_categoria">
                       </div>
                       <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" onclick="eliminarCategoria()">Eliminar</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                       </div>
@@ -140,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     addButton.addEventListener('click', function() {
-        // Restablecer el formulario de agregar categoría
         document.getElementById('newCategoryName').value = '';
     });
 
@@ -152,4 +164,25 @@ document.addEventListener('DOMContentLoaded', function() {
         // Lógica para el formulario de agregar categoría
     });
 });
+
+function eliminarCategoria() {
+    var categoryIdInput = document.getElementById('categoryId');
+    if (categoryIdInput && categoryIdInput.value) {
+        var confirmacion = confirm("¿Estás seguro de que deseas eliminar esta categoría?");
+        if (confirmacion) {
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '';
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'eliminar_categoria';
+            input.value = categoryIdInput.value;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+}
 </script>
