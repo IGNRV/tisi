@@ -10,6 +10,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 require_once 'db.php';
 ?>
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -52,29 +53,79 @@ require_once 'db.php';
 <?php include 'navbar.php'; ?>
 
 <div class="container-fluid">
-  <div class="row">
-    <?php include 'sidebar.php'; ?>
-    <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-md-4">
-      <?php 
-      if (isset($_GET['page'])) {
-        switch ($_GET['page']) {
-          case 'products':
-            include 'product_stock.php';
-            break;
-          case 'categorias':
-            include 'categorias.php';
-            break;
-          // Agrega más casos según sea necesario
-        }
-      }
-      ?>
+    <div class="row">
+        <?php include 'sidebar.php'; ?>
+        <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-md-4">
+            <?php 
+            if (isset($_GET['page'])) {
+                switch ($_GET['page']) {
+                    case 'products':
+                        include 'product_stock.php';
+                        break;
+                    case 'categorias':
+                        include 'categorias.php';
+                        break;
+                    // Agrega más casos según sea necesario
+                    default:
+                        include 'buscar_productos.php';
+                        break;
+                }
+            } else {
+                // Si no hay ninguna página especificada, incluir buscar_productos.php por defecto
+                include 'buscar_productos.php';
+            }
+            ?>
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- Incluir JS de Bootstrap -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var inputBusqueda = document.getElementById('buscar');
+    var resultadosDiv = document.getElementById('resultados-busqueda');
+    var tablaSeleccionados = document.getElementById('tabla-seleccionados').querySelector('tbody');
+
+    inputBusqueda.addEventListener('input', function() {
+        var buscarTexto = inputBusqueda.value.trim();
+        if (buscarTexto.length > 2) {
+            fetch('buscar_productos.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'buscar=' + encodeURIComponent(buscarTexto)
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultadosDiv.innerHTML = '';
+                data.forEach(function(producto) {
+                    var li = document.createElement('li');
+                    li.textContent = producto.nombre + " - $" + producto.precio + " - Stock: " + producto.stock + " - Categoría: " + producto.categoria;
+                    li.addEventListener('click', function() {
+                        agregarProductoSeleccionado(producto);
+                    });
+                    resultadosDiv.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        } else {
+            resultadosDiv.innerHTML = '';
+        }
+    });
+
+    function agregarProductoSeleccionado(producto) {
+        var fila = tablaSeleccionados.insertRow();
+        fila.insertCell().textContent = producto.nombre;
+        fila.insertCell().textContent = "$" + producto.precio;
+        fila.insertCell().textContent = producto.stock;
+        fila.insertCell().textContent = producto.categoria;
+    }
+});
+</script>
+
+
 </body>
 </html>
