@@ -136,7 +136,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function editarCantidad(btn) {
         var producto = JSON.parse(btn.dataset.producto);
-        document.getElementById('inputCantidad').value = producto.cantidad || '1';
+        var inputCantidad = document.getElementById('inputCantidad');
+        
+        inputCantidad.value = producto.cantidad || '1';
+        inputCantidad.max = producto.stock; // Establecer el máximo según el stock
+
         document.getElementById('productoSeleccionadoId').value = btn.dataset.producto;
         $('#modalCantidad').modal('show');
     }
@@ -144,6 +148,13 @@ document.addEventListener('DOMContentLoaded', function() {
     window.actualizarCantidad = function() {
         var cantidad = document.getElementById('inputCantidad').value;
         var producto = JSON.parse(document.getElementById('productoSeleccionadoId').value);
+        
+        // Verificar que la cantidad no exceda el stock
+        if (cantidad > producto.stock) {
+            alert("La cantidad no puede exceder el stock disponible.");
+            return;
+        }
+
         producto.cantidad = cantidad;
         
         var filas = tablaSeleccionados.rows;
