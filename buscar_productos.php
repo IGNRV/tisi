@@ -50,10 +50,30 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
         <tr>
             <th>Producto</th>
             <th>Precio</th>
-            <th>Stock</th>
-            <th>Categoria</th>
+            <th>Cantidad</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
+<div class="modal fade" id="modalCantidad" tabindex="-1" role="dialog" aria-labelledby="modalCantidadLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCantidadLabel">Modificar Cantidad</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="number" id="inputCantidad" class="form-control" min="1">
+                <input type="hidden" id="productoSeleccionadoId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="actualizarCantidad()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -120,9 +120,42 @@ document.addEventListener('DOMContentLoaded', function() {
         var fila = tablaSeleccionados.insertRow();
         fila.insertCell().textContent = producto.nombre;
         fila.insertCell().textContent = "$" + producto.precio;
-        fila.insertCell().textContent = producto.stock;
+        var celdaCantidad = fila.insertCell();
+        celdaCantidad.textContent = '1'; // Cantidad inicial
         fila.insertCell().textContent = producto.categoria;
+        
+        var btnEditar = document.createElement('button');
+        btnEditar.textContent = 'Editar Cantidad';
+        btnEditar.className = 'btn btn-primary';
+        btnEditar.dataset.producto = JSON.stringify(producto); // Almacenar el producto en el botón
+        btnEditar.onclick = function() {
+            editarCantidad(this);
+        };
+        fila.insertCell().appendChild(btnEditar);
     }
+
+    function editarCantidad(btn) {
+        var producto = JSON.parse(btn.dataset.producto);
+        document.getElementById('inputCantidad').value = producto.cantidad || '1';
+        document.getElementById('productoSeleccionadoId').value = btn.dataset.producto;
+        $('#modalCantidad').modal('show');
+    }
+
+    window.actualizarCantidad = function() {
+        var cantidad = document.getElementById('inputCantidad').value;
+        var producto = JSON.parse(document.getElementById('productoSeleccionadoId').value);
+        producto.cantidad = cantidad;
+        
+        var filas = tablaSeleccionados.rows;
+        for (var i = 0; i < filas.length; i++) {
+            var btn = filas[i].cells[4].firstChild;
+            if (btn.dataset.producto === document.getElementById('productoSeleccionadoId').value) {
+                filas[i].cells[2].textContent = cantidad; // Actualizar cantidad
+                break;
+            }
+        }
+        $('#modalCantidad').modal('hide');
+    };
 });
 </script>
 
