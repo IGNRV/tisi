@@ -105,7 +105,14 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 
 
 <div>
-    <label for="buscar">Monto a pagar</label>
-    <input type="text" name="buscar" class="form-control" id="buscar">
+    <label for="montopagar">Monto a pagar</label>
+    <input type="text" name="montopagar" class="form-control" id="montopagar">
+</div>
+
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" id="usarTotal">
+    <label class="form-check-label" for="usarTotal">
+        Usar total de la compra
+    </label>
 </div>
 

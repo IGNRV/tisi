@@ -87,6 +87,25 @@ require_once 'db.php';
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
+    var checkbox = document.getElementById('usarTotal');
+    var inputMontoPagar = document.getElementById('montopagar');
+    var divTotalPrecio = document.getElementById('totalPrecio');
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Extraer el valor numérico del total y actualizar el input
+            var total = divTotalPrecio.textContent.replace('Total: $', '');
+            inputMontoPagar.value = total;
+            inputMontoPagar.disabled = true; // Bloquear el input
+        } else {
+            // Desbloquear el input y limpiar su valor
+            inputMontoPagar.disabled = false;
+            inputMontoPagar.value = '';
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
     var inputBusqueda = document.getElementById('buscar');
     var resultadosDiv = document.getElementById('resultados-busqueda');
     var tablaSeleccionados = document.getElementById('tabla-seleccionados').querySelector('tbody');
@@ -120,17 +139,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     function calcularTotal() {
-    var filas = tablaSeleccionados.rows;
-    var total = 0;
+        var filas = tablaSeleccionados.rows;
+        var total = 0;
 
-    for (var i = 0; i < filas.length; i++) {
-        var precio = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
-        var cantidad = parseInt(filas[i].cells[2].textContent);
-        total += precio * cantidad;
+        for (var i = 0; i < filas.length; i++) {
+            var precio = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
+            var cantidad = parseInt(filas[i].cells[2].textContent);
+            total += precio * cantidad;
+        }
+
+        document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed(0);
+
+        // Actualizar el monto a pagar si el checkbox está marcado
+        if (document.getElementById('usarTotal').checked) {
+            document.getElementById('montopagar').value = total.toFixed(0);
+        }
     }
-
-    document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed();
-}
 
 
     function agregarProductoSeleccionado(producto) {
