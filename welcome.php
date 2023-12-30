@@ -85,10 +85,12 @@ require_once 'db.php';
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
     var inputBusqueda = document.getElementById('buscar');
     var resultadosDiv = document.getElementById('resultados-busqueda');
     var tablaSeleccionados = document.getElementById('tabla-seleccionados').querySelector('tbody');
+    var productosSeleccionados = {}; // Objeto para rastrear los productos seleccionados
 
     inputBusqueda.addEventListener('input', function() {
         var buscarTexto = inputBusqueda.value.trim();
@@ -102,12 +104,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 resultadosDiv.innerHTML = '';
                 data.forEach(function(producto) {
-                    var li = document.createElement('li');
-                    li.textContent = producto.nombre + " - $" + producto.precio + " - Stock: " + producto.stock + " - Categoría: " + producto.categoria;
-                    li.addEventListener('click', function() {
-                        agregarProductoSeleccionado(producto);
-                    });
-                    resultadosDiv.appendChild(li);
+                    if (!productosSeleccionados[producto.nombre]) { // Verifica si el producto no ha sido seleccionado
+                        var li = document.createElement('li');
+                        li.textContent = producto.nombre + " - $" + producto.precio + " - Stock: " + producto.stock + " - Categoría: " + producto.categoria;
+                        li.addEventListener('click', function() {
+                            agregarProductoSeleccionado(producto);
+                        });
+                        resultadosDiv.appendChild(li);
+                    }
                 });
             })
             .catch(error => console.error('Error:', error));
@@ -115,8 +119,23 @@ document.addEventListener('DOMContentLoaded', function() {
             resultadosDiv.innerHTML = '';
         }
     });
+    function calcularTotal() {
+    var filas = tablaSeleccionados.rows;
+    var total = 0;
+
+    for (var i = 0; i < filas.length; i++) {
+        var precio = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
+        var cantidad = parseInt(filas[i].cells[2].textContent);
+        total += precio * cantidad;
+    }
+
+    document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed();
+}
+
 
     function agregarProductoSeleccionado(producto) {
+        if (productosSeleccionados[producto.nombre]) return; // Evita agregar el producto si ya está seleccionado
+
         var fila = tablaSeleccionados.insertRow();
         fila.insertCell().textContent = producto.nombre;
         fila.insertCell().textContent = "$" + producto.precio;
@@ -132,6 +151,10 @@ document.addEventListener('DOMContentLoaded', function() {
             editarCantidad(this);
         };
         fila.insertCell().appendChild(btnEditar);
+
+        productosSeleccionados[producto.nombre] = true; // Marca el producto como seleccionado
+        calcularTotal();
+
     }
 
     function editarCantidad(btn) {
@@ -166,6 +189,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         $('#modalCantidad').modal('hide');
+        calcularTotal();
+
     };
 });
 </script>

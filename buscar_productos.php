@@ -43,7 +43,6 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
         <input type="text" name="buscar" class="form-control" id="buscar">
         <ul id="resultados-busqueda"></ul>
     </div>
-    <button type="submit" class="btn btn-primary">Buscar</button>
 </form>
 <table class="table" id="tabla-seleccionados">
     <thead>
@@ -77,3 +76,4 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
         </div>
     </div>
 </div>
+<div id="totalPrecio" style="font-weight: bold;">Total: $0</div>
