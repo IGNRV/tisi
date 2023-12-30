@@ -33,7 +33,7 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     exit;
 }
 
-$query_medios_pago = "SELECT nombre_medio_pago FROM medios_de_pago";
+$query_medios_pago = "SELECT id_medios_de_pago, nombre_medio_pago FROM medios_de_pago";
 
 $medios_pago = [];
 if ($stmt = $conn->prepare($query_medios_pago)) {
@@ -115,4 +115,11 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
         Usar total de la compra
     </label>
 </div>
+
+<div>
+    <label for="diferencia">Diferencia</label>
+    <input type="text" name="diferencia" class="form-control" id="diferencia" disabled>
+</div>
+
+<button type="button" class="btn btn-primary" id="registrarPago">REGISTRAR PAGO</button>
 

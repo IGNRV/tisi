@@ -154,7 +154,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (document.getElementById('usarTotal').checked) {
             document.getElementById('montopagar').value = total.toFixed(0);
         }
+
+        // Calcular y mostrar la diferencia
+        actualizarDiferencia();
     }
+
+    function actualizarDiferencia() {
+        var total = parseFloat(document.getElementById('totalPrecio').textContent.replace('Total: $', ''));
+        var montoPagar = parseFloat(document.getElementById('montopagar').value);
+        var diferencia = total - montoPagar;
+
+        if (!isNaN(diferencia)) {
+            document.getElementById('diferencia').value = diferencia.toFixed(0);
+        } else {
+            document.getElementById('diferencia').value = '0.00';
+        }
+    }
+
+    var inputMontoPagar = document.getElementById('montopagar');
+    inputMontoPagar.addEventListener('input', actualizarDiferencia);
 
 
     function agregarProductoSeleccionado(producto) {
@@ -217,6 +235,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     };
 });
+
+document.getElementById('registrarPago').addEventListener('click', function() {
+    var medioPago = document.getElementById('medioPago').value;
+    var total = document.getElementById('totalPrecio').textContent.replace('Total: $', '');
+    var diferencia = document.getElementById('diferencia').value;
+    var idUsuario = '<?php echo $_SESSION['id']; ?>';
+
+    // Realiza una solicitud AJAX para registrar el pago
+    fetch('registrar_pago.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'medioPago=' + medioPago + '&total=' + total + '&diferencia=' + diferencia + '&idUsuario=' + idUsuario
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Manejar la respuesta
+    })
+    .catch(error => console.error('Error:', error));
+});
+
 </script>
 
 
