@@ -32,6 +32,22 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     }
     exit;
 }
+
+$query_medios_pago = "SELECT nombre_medio_pago FROM medios_de_pago";
+
+$medios_pago = [];
+if ($stmt = $conn->prepare($query_medios_pago)) {
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        $medios_pago[] = $row['nombre_medio_pago'];
+    }
+    $stmt->close();
+} else {
+    // Manejo de error, por ejemplo:
+    echo json_encode(["error" => $conn->error]);
+}
 ?>
 
 
@@ -77,3 +93,19 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     </div>
 </div>
 <div id="totalPrecio" style="font-weight: bold;">Total: $0</div>
+
+<div class="form-group">
+    <label for="medioPago">Medio de Pago</label>
+    <select class="form-control" id="medioPago">
+        <?php foreach ($medios_pago as $medio) : ?>
+            <option value="<?php echo htmlspecialchars($medio); ?>"><?php echo htmlspecialchars($medio); ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
+
+<div>
+    <label for="buscar">Monto a pagar</label>
+    <input type="text" name="buscar" class="form-control" id="buscar">
+</div>
+
