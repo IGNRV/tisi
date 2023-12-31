@@ -160,16 +160,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function actualizarDiferencia() {
-        var total = parseFloat(document.getElementById('totalPrecio').textContent.replace('Total: $', ''));
-        var montoPagar = parseFloat(document.getElementById('montopagar').value);
-        var diferencia = total - montoPagar;
-
-        if (!isNaN(diferencia)) {
-            document.getElementById('diferencia').value = diferencia.toFixed(0);
-        } else {
-            document.getElementById('diferencia').value = '0.00';
-        }
+    var total = parseFloat(document.getElementById('totalPrecio').textContent.replace('Total: $', ''));
+    var montoPagadoCliente = parseFloat(document.getElementById('montopagar').value);
+    
+    // Calcular la diferencia solo si el montoPagadoCliente es válido y no menor que total
+    if (!isNaN(montoPagadoCliente) && montoPagadoCliente >= total) {
+        var diferencia = montoPagadoCliente - total;
+        document.getElementById('diferencia').value = diferencia.toFixed(0);
+    } else {
+        document.getElementById('diferencia').value = '0.00';
     }
+}
+
+// Asegúrate de llamar a actualizarDiferencia() cuando cambie el valor de montopagar
+document.getElementById('montopagar').addEventListener('input', actualizarDiferencia);
+
 
     var inputMontoPagar = document.getElementById('montopagar');
     inputMontoPagar.addEventListener('input', actualizarDiferencia);
@@ -238,21 +243,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.getElementById('registrarPago').addEventListener('click', function() {
     var medioPago = document.getElementById('medioPago').value;
-    var total = document.getElementById('totalPrecio').textContent.replace('Total: $', '');
-    var diferencia = document.getElementById('diferencia').value;
+    var total = parseFloat(document.getElementById('totalPrecio').textContent.replace('Total: $', ''));
+    var montoPagadoCliente = parseFloat(document.getElementById('montopagar').value);
     var idUsuario = '<?php echo $_SESSION['id']; ?>';
 
-    // Realiza una solicitud AJAX para registrar el pago
+    if (montoPagadoCliente < total) {
+        // Si el monto pagado es menor que el total, mostrar un mensaje y no proceder
+        alert("El monto a pagar debe ser igual o mayor al total de la compra.");
+        return;
+    }
+
+    // Si el monto es suficiente, proceder con la solicitud AJAX
     fetch('registrar_pago.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'medioPago=' + medioPago + '&total=' + total + '&diferencia=' + diferencia + '&idUsuario=' + idUsuario
+        body: 'medioPago=' + medioPago + '&total=' + total + '&diferencia=' + (total - montoPagadoCliente) + '&montoPagadoCliente=' + montoPagadoCliente + '&idUsuario=' + idUsuario
     })
     .then(response => response.text())
     .then(data => {
-        console.log(data); // Manejar la respuesta
+        // Manejar la respuesta
+        alert("Pago registrado con éxito.");
+        window.location.reload();
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Error al registrar el pago.");
+    });
 });
 
 </script>
