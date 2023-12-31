@@ -253,11 +253,29 @@ document.getElementById('registrarPago').addEventListener('click', function() {
         return;
     }
 
-    // Si el monto es suficiente, proceder con la solicitud AJAX
+    // Crear un array con la información de los productos vendidos
+    var productosVendidos = [];
+    var filas = document.getElementById('tabla-seleccionados').querySelector('tbody').rows;
+    for (var i = 0; i < filas.length; i++) {
+        productosVendidos.push({
+            nombre: filas[i].cells[0].textContent,
+            cantidadVendida: parseInt(filas[i].cells[2].textContent)
+        });
+    }
+
+    // Agregar productosVendidos al cuerpo de la solicitud
+    var formData = new FormData();
+    formData.append('medioPago', medioPago);
+    formData.append('total', total);
+    formData.append('diferencia', total - montoPagadoCliente);
+    formData.append('montoPagadoCliente', montoPagadoCliente);
+    formData.append('idUsuario', idUsuario);
+    formData.append('productosVendidos', JSON.stringify(productosVendidos));
+
+    // Realiza la solicitud AJAX
     fetch('registrar_pago.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'medioPago=' + medioPago + '&total=' + total + '&diferencia=' + (total - montoPagadoCliente) + '&montoPagadoCliente=' + montoPagadoCliente + '&idUsuario=' + idUsuario
+        body: formData
     })
     .then(response => response.text())
     .then(data => {
@@ -270,6 +288,7 @@ document.getElementById('registrarPago').addEventListener('click', function() {
         alert("Error al registrar el pago.");
     });
 });
+
 
 </script>
 
