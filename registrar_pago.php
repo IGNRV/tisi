@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         echo "Pago registrado con éxito";
+        header('Location: generar_boleta.php?medioPago=' . urlencode($medioPago) . '&total=' . $total . '&diferencia=' . $diferencia . '&productosVendidos=' . urlencode(json_encode($productosVendidos)));
+exit;
         $stmt->close();
     } else {
         echo "Error: " . $conn->error;

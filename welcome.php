@@ -287,6 +287,8 @@ document.getElementById('registrarPago').addEventListener('click', function() {
         console.error('Error:', error);
         alert("Error al registrar el pago.");
     });
+    window.open('generar_boleta.php?medioPago=' + medioPago + '&total=' + total + '&diferencia=' + diferencia + '&productosVendidos=' + encodeURIComponent(JSON.stringify(productosVendidos)), '_blank');
+
 });
 
 
