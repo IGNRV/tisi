@@ -8,12 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $diferencia = abs($_POST['diferencia']);
     $idUsuario = $_POST['idUsuario'];
     $montoPagadoCliente = $_POST['montoPagadoCliente']; // Recibe el monto pagado por el cliente
+    $fechaActual = date("Y-m-d"); // Obtener la fecha actual
 
     // Consulta SQL para insertar los datos en la base de datos
-    $query = "INSERT INTO detalles_transaccion (medio_de_pago, total, diferencia, monto_pagado_cliente, id_usuario) VALUES (?, ?, ?, ?, ?)";
+    $query = "INSERT INTO detalles_transaccion (medio_de_pago, total, diferencia, monto_pagado_cliente, id_usuario, date_created) VALUES (?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("iidsi", $medioPago, $total, $diferencia, $montoPagadoCliente, $idUsuario);
+        $stmt->bind_param("iidsis", $medioPago, $total, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
         $stmt->execute();
 
         // Actualizar el stock de los productos vendidos
