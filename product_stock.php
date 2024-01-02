@@ -42,6 +42,13 @@ if (isset($_SESSION['id'])) {
   </button>
 </div>
 
+<!-- Botón para carga masiva -->
+<div class="mb-3">
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#massUploadModal">
+        Carga Masiva de Productos
+    </button>
+</div>
+
 <div class="table-responsive">
     <table class="table">
         <thead class="thead-dark">
@@ -114,6 +121,33 @@ if (isset($_SESSION['id'])) {
         </tbody>
     </table>
 </div>
+
+<!-- Modal para Carga Masiva -->
+<div class="modal fade" id="massUploadModal" tabindex="-1" role="dialog" aria-labelledby="massUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="massUploadModalLabel">Carga Masiva de Productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="mass_upload.php" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="fileUpload">Selecciona el archivo:</label>
+                        <input type="file" name="fileUpload" id="fileUpload" class="form-control-file">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Subir Archivo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal para Agregar Producto -->
 <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">

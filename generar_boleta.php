@@ -18,7 +18,7 @@ $pdf->Ln(20);
 $pdf->SetFont('Arial', '', 12);
 foreach ($productosVendidos as $producto) {
     $pdf->Cell(40, 10, $producto['nombre']);
-    $pdf->Cell(40, 10, '$' . $producto['precio']);
+    $pdf->Cell(40, 10, '$' . number_format((float)$producto['precio'], 2, '.', '')); // Asegúrate de que el precio se formatee correctamente
     $pdf->Cell(40, 10, $producto['cantidadVendida']);
     $pdf->Ln();
 }

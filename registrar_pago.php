@@ -1,25 +1,36 @@
 <?php
-require_once 'db.php'; // Asegúrate de que este es el camino correcto a tu script de conexión a la base de datos
+require_once 'db.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $medioPago = $_POST['medioPago'];
     $total = $_POST['total'];
-    $diferencia = abs($_POST['diferencia']);
     $idUsuario = $_POST['idUsuario'];
-    $montoPagadoCliente = $_POST['montoPagadoCliente']; // Recibe el monto pagado por el cliente
-    $fechaActual = date("Y-m-d"); // Obtener la fecha actual
+    $montoPagadoCliente = $_POST['montoPagadoCliente'];
+    $fechaActual = date("Y-m-d");
 
-    // Consulta SQL para insertar los datos en la base de datos
     $query = "INSERT INTO detalles_transaccion (medio_de_pago, total, diferencia, monto_pagado_cliente, id_usuario, date_created) VALUES (?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("iidsis", $medioPago, $total, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
+        $diferencia = $montoPagadoCliente - $total; // Calcular la diferencia aquí
+        $stmt->bind_param("iidssi", $medioPago, $total, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
         $stmt->execute();
 
-        // Actualizar el stock de los productos vendidos
         $productosVendidos = json_decode($_POST['productosVendidos'], true);
-        foreach ($productosVendidos as $producto) {
+        foreach ($productosVendidos as &$producto) {
+            $queryPrecio = "SELECT precio FROM productos WHERE nombre_px = ?";
+            if ($stmtPrecio = $conn->prepare($queryPrecio)) {
+                $stmtPrecio->bind_param("s", $producto['nombre']);
+                $stmtPrecio->execute();
+                $resultadoPrecio = $stmtPrecio->get_result();
+                if ($filaPrecio = $resultadoPrecio->fetch_assoc()) {
+                    $producto['precio'] = $filaPrecio['precio'];
+                } else {
+                    $producto['precio'] = 0; // o manejarlo de otra manera si el producto no tiene precio
+                }
+                $stmtPrecio->close();
+            }
+
             $queryUpdateStock = "UPDATE productos SET stock = stock - ? WHERE nombre_px = ?";
             if ($stmtUpdate = $conn->prepare($queryUpdateStock)) {
                 $stmtUpdate->bind_param("is", $producto['cantidadVendida'], $producto['nombre']);
@@ -27,13 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmtUpdate->close();
             }
         }
+        unset($producto); // Rompe la referencia con el último elemento
 
-        echo "Pago registrado con éxito";
-        header('Location: generar_boleta.php?medioPago=' . urlencode($medioPago) . '&total=' . $total . '&diferencia=' . $diferencia . '&productosVendidos=' . urlencode(json_encode($productosVendidos)));
-exit;
-        $stmt->close();
+        $productosVendidosEncoded = urlencode(json_encode($productosVendidos));
+        header("Location: generar_boleta.php?medioPago=$medioPago&total=$total&diferencia=$diferencia&productosVendidos=$productosVendidosEncoded");
+        exit;
     } else {
         echo "Error: " . $conn->error;
     }
+    $stmt->close();
 }
 ?>
