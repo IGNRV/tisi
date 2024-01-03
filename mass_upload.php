@@ -16,6 +16,24 @@ if (isset($_SESSION['id']) && isset($_FILES['fileUpload'])) {
     $spreadsheet = $reader->load($filePath);
     $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
 
+    // Verificar si existe la categoría 'ETC' para el usuario
+    $categoria_etc_id = null;
+    $stmt = $conn->prepare("SELECT id_categoria FROM categorias WHERE nombre_categoria = 'ETC' AND id_usuario = ?");
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        // Si la categoría existe, obtener el id_categoria
+        $categoria = $result->fetch_assoc();
+        $categoria_etc_id = $categoria['id_categoria'];
+    } else {
+        // Si no existe, insertar la nueva categoría 'ETC'
+        $stmt = $conn->prepare("INSERT INTO categorias (nombre_categoria, id_usuario) VALUES ('ETC', ?)");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $categoria_etc_id = $conn->insert_id; // Obtener el id de la categoría recién insertada
+    }
+
     $conn->begin_transaction(); // Iniciar transacción
 
     try {
@@ -25,19 +43,19 @@ if (isset($_SESSION['id']) && isset($_FILES['fileUpload'])) {
             $precio = $sheetData[$i]['B']; // Asumiendo que precio está en la columna B
             $stock = $sheetData[$i]['C']; // Asumiendo que stock está en la columna C
 
-            // Preparar y ejecutar la consulta SQL para insertar los datos
-            $stmt = $conn->prepare("INSERT INTO productos (nombre_px, precio, stock, id_usuario) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("siii", $nombre_px, $precio, $stock, $id_usuario);
+            // Preparar y ejecutar la consulta SQL para insertar los datos con la categoría 'ETC'
+            $stmt = $conn->prepare("INSERT INTO productos (nombre_px, precio, stock, id_categoria, id_usuario) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("siisi", $nombre_px, $precio, $stock, $categoria_etc_id, $id_usuario);
             $stmt->execute();
         }
 
         $conn->commit(); // Confirmar transacción
-        header("Location: product_stock.php?update_success");
+        header("Location: welcome.php?page=products&update_success");
     } catch (Exception $e) {
         $conn->rollback(); // Revertir transacción en caso de error
-        header("Location: product_stock.php?error");
+        header("Location: welcome.php?page=products&error");
     }
 } else {
-    header("Location: product_stock.php?error");
+    header("Location: welcome.php?page=products&error");
 }
 ?>
