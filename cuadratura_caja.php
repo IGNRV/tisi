@@ -49,24 +49,29 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 <div id="resultadosCuadratura"></div>
 
 <script>
+let busquedasRealizadas = {};
+
 function buscarCuadratura(event) {
     event.preventDefault(); // Evitar que el formulario se envíe de la manera tradicional
     
     var fecha = document.getElementById('fecha').value;
     var medioPago = document.getElementById('medioPago').value;
-    
+    var claveBusqueda = `${fecha}-${medioPago}`;
+
+    // Verificar si ya se realizó esta búsqueda
+    if (busquedasRealizadas[claveBusqueda]) {
+        alert('Ya se mostraron los resultados para esta fecha y medio de pago.');
+        return;
+    }
+
     fetch('procesamiento_cuadratura.php', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'fecha=' + fecha + '&medioPago=' + medioPago
     })
     .then(response => response.json())
     .then(response => {
         const resultadosDiv = document.getElementById('resultadosCuadratura');
-        resultadosDiv.innerHTML = ''; // Limpiar resultados anteriores
-
         const data = response.resultados;
         const totalAcumulado = response.totalAcumulado;
 
@@ -111,10 +116,14 @@ function buscarCuadratura(event) {
 
         // Crear y añadir un elemento para mostrar el total acumulado
         const totalDiv = document.createElement('div');
-        totalDiv.innerHTML = `<strong>Total acumulado con IVA: $${totalAcumulado.toFixed(0)}</strong>`;
+        totalDiv.innerHTML = `<strong>Total acumulado con IVA: $${totalAcumulado.toFixed(2)}</strong>`;
         resultadosDiv.appendChild(totalDiv);
+
+        // Marcar esta búsqueda como realizada
+        busquedasRealizadas[claveBusqueda] = true;
     })
     .catch(error => console.error('Error:', error));
 }
+
 
 </script>
