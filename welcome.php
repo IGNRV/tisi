@@ -259,6 +259,7 @@ document.getElementById('registrarPago').addEventListener('click', function() {
     for (var i = 0; i < filas.length; i++) {
         productosVendidos.push({
             nombre: filas[i].cells[0].textContent,
+            precio: filas[i].cells[1].textContent.replace('$', ''),
             cantidadVendida: parseInt(filas[i].cells[2].textContent)
         });
     }

@@ -17,11 +17,17 @@ $pdf->Ln(20);
 // Listar los productos vendidos
 $pdf->SetFont('Arial', '', 12);
 foreach ($productosVendidos as $producto) {
+    $precio = (float)$producto['precio'];
+    $cantidad = (int)$producto['cantidadVendida'];
+    $totalProducto = $precio * $cantidad;
+
     $pdf->Cell(40, 10, $producto['nombre']);
-    $pdf->Cell(40, 10, '$' . number_format((float)$producto['precio'], 2, '.', '')); // Asegúrate de que el precio se formatee correctamente
-    $pdf->Cell(40, 10, $producto['cantidadVendida']);
+    $pdf->Cell(40, 10, '$' . number_format($precio, 2, '.', ''));
+    $pdf->Cell(40, 10, $cantidad);
+    $pdf->Cell(40, 10, '$' . number_format($totalProducto, 2, '.', ''));
     $pdf->Ln();
 }
+
 
 // Mostrar total, medio de pago y diferencia
 $pdf->Ln(10);
