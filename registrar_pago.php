@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt = $conn->prepare($query)) {
         $diferencia = $montoPagadoCliente - $total; // Calcular la diferencia
         // Asegúrate de pasar $iva y $totalConIva a la consulta
-        $stmt->bind_param("iidddssi", $medioPago, $total, $iva, $totalConIva, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
+        $stmt->bind_param("iidddsss", $medioPago, $total, $iva, $totalConIva, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
         $stmt->execute();
 
         $productosVendidos = json_decode($_POST['productosVendidos'], true);
