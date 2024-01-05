@@ -90,21 +90,24 @@ require_once 'db.php';
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
-    var checkbox = document.getElementById('usarTotal');
+    var checkboxUsarTotal = document.getElementById('usarTotal');
     var inputMontoPagar = document.getElementById('montopagar');
-    var divTotalPrecio = document.getElementById('totalPrecio');
+    var divTotalConIva = document.getElementById('totalConIva');
 
-    checkbox.addEventListener('change', function() {
+    checkboxUsarTotal.addEventListener('change', function() {
         if (this.checked) {
-            // Extraer el valor numérico del total y actualizar el input
-            var total = divTotalPrecio.textContent.replace('Total: $', '');
-            inputMontoPagar.value = total;
-            inputMontoPagar.disabled = true; // Bloquear el input
+            // Extraer el valor numérico del total con IVA y actualizar el input de monto a pagar
+            var totalConIva = divTotalConIva.textContent.replace('Total con IVA: $', '');
+            inputMontoPagar.value = totalConIva;
+            inputMontoPagar.disabled = true; // Bloquear el input para que no se pueda editar
         } else {
             // Desbloquear el input y limpiar su valor
             inputMontoPagar.disabled = false;
             inputMontoPagar.value = '';
         }
+
+        // Llamar a actualizarDiferencia para recalcular la diferencia
+        actualizarDiferencia();
     });
 });
 
@@ -161,20 +164,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Actualizar el monto a pagar si el checkbox está marcado
         if (document.getElementById('usarTotal').checked) {
-            document.getElementById('montopagar').value = total.toFixed(0);
-        }
-
-        // Calcular y mostrar la diferencia
-        actualizarDiferencia();
+            document.getElementById('montopagar').value = totalConIva.toFixed(0);
     }
 
-    function actualizarDiferencia() {
-    var total = parseFloat(document.getElementById('totalPrecio').textContent.replace('Total: $', ''));
+    // Calcular y mostrar la diferencia
+    actualizarDiferencia();
+}
+
+function actualizarDiferencia() {
+    var totalConIva = parseFloat(document.getElementById('totalConIva').textContent.replace('Total con IVA: $', ''));
     var montoPagadoCliente = parseFloat(document.getElementById('montopagar').value);
     
-    // Calcular la diferencia solo si el montoPagadoCliente es válido y no menor que total
-    if (!isNaN(montoPagadoCliente) && montoPagadoCliente >= total) {
-        var diferencia = montoPagadoCliente - total;
+    // Calcular la diferencia solo si el montoPagadoCliente es válido y no menor que el total con IVA
+    if (!isNaN(montoPagadoCliente) && montoPagadoCliente >= totalConIva) {
+        var diferencia = montoPagadoCliente - totalConIva;
         document.getElementById('diferencia').value = diferencia.toFixed(0);
     } else {
         document.getElementById('diferencia').value = '0.00';

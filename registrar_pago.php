@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $query = "INSERT INTO detalles_transaccion (medio_de_pago, total, iva, total_con_iva, diferencia, monto_pagado_cliente, id_usuario, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
-        $diferencia = $montoPagadoCliente - $total; // Calcular la diferencia
+        $diferencia = $montoPagadoCliente - $totalConIva; // Calcular la diferencia
         // Asegúrate de pasar $iva y $totalConIva a la consulta
         $stmt->bind_param("iidddsss", $medioPago, $total, $iva, $totalConIva, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
         $stmt->execute();
