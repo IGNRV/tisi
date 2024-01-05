@@ -65,6 +65,9 @@ require_once 'db.php';
                     case 'categorias':
                         include 'categorias.php';
                         break;
+                    case 'cuadratura':
+                        include 'cuadratura_caja.php';
+                        break;
                     // Agrega más casos según sea necesario
                     default:
                         include 'buscar_productos.php';

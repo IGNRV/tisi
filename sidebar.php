@@ -9,6 +9,9 @@
     <li class="nav-item">
       <a href="welcome.php?page=categorias" class="nav-link text-white">Categorias</a>
     </li>
+    <li class="nav-item">
+      <a href="welcome.php?page=cuadratura" class="nav-link text-white">Cuadratura de Caja</a>
+    </li>
     <!-- Más elementos del sidebar aquí según sea necesario -->
   </ul>
 </div>
