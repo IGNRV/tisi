@@ -63,9 +63,12 @@ function buscarCuadratura(event) {
         body: 'fecha=' + fecha + '&medioPago=' + medioPago
     })
     .then(response => response.json())
-    .then(data => {
+    .then(response => {
         const resultadosDiv = document.getElementById('resultadosCuadratura');
         resultadosDiv.innerHTML = ''; // Limpiar resultados anteriores
+
+        const data = response.resultados;
+        const totalAcumulado = response.totalAcumulado;
 
         // Crear la tabla
         const tabla = document.createElement('table');
@@ -105,7 +108,13 @@ function buscarCuadratura(event) {
 
         // Añadir la tabla al div de resultados
         resultadosDiv.appendChild(tabla);
+
+        // Crear y añadir un elemento para mostrar el total acumulado
+        const totalDiv = document.createElement('div');
+        totalDiv.innerHTML = `<strong>Total acumulado con IVA: $${totalAcumulado.toFixed(0)}</strong>`;
+        resultadosDiv.appendChild(totalDiv);
     })
     .catch(error => console.error('Error:', error));
 }
+
 </script>

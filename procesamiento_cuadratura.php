@@ -1,26 +1,25 @@
 <?php
+// procesamiento_cuadratura.php
 require_once 'db.php';
 
-// Verificar si los datos fueron enviados por POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fecha = $_POST['fecha'];
     $medioPago = $_POST['medioPago'];
 
-    // Convertir la fecha al formato correcto para la base de datos (YYYY-MM-DD)
     $fechaFormateada = date('Y-m-d', strtotime($fecha));
-
-    // Preparar la consulta SQL
     $query = "SELECT * FROM detalles_transaccion WHERE date_created = ? AND medio_de_pago = ?";
 
     $resultados = [];
+    $totalAcumulado = 0; // Inicializar el total acumulado
+
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("si", $fechaFormateada, $medioPago);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Recoger los resultados
         while ($row = $result->fetch_assoc()) {
             $resultados[] = $row;
+            $totalAcumulado += $row['total_con_iva']; // Acumular el total
         }
 
         $stmt->close();
@@ -29,9 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    // Devolver los resultados en formato JSON
-    echo json_encode($resultados);
+    // Enviar los resultados y el total acumulado
+    echo json_encode(['resultados' => $resultados, 'totalAcumulado' => $totalAcumulado]);
 } else {
     echo "Método no permitido";
 }
+
 ?>
