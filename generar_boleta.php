@@ -34,20 +34,31 @@ foreach ($productosVendidos as $producto) {
     $totalProducto = $precio * $cantidad;
 
     $pdf->Cell(40, 10, $producto['nombre']);
-    $pdf->Cell(40, 10, '$' . number_format($precio, 2, '.', ''));
+    $pdf->Cell(40, 10, '$' . number_format($precio, 0, '.', ''));
     $pdf->Cell(40, 10, $cantidad);
-    $pdf->Cell(40, 10, '$' . number_format($totalProducto, 2, '.', ''));
+    $pdf->Cell(40, 10, '$' . number_format($totalProducto, 0, '.', ''));
     $pdf->Ln();
 }
 
 
 // Mostrar total, medio de pago y diferencia
 $pdf->Ln(10);
-$pdf->Cell(40, 10, "Total: $" . $total);
+$pdf->Cell(40, 10, "Total: $" . number_format($total, 0, '.', ''));
 $pdf->Ln();
+
+// Calcular y mostrar IVA (19% del total)
+$iva = $total * 0.19;
+$pdf->Cell(40, 10, "IVA (19%): $" . number_format($iva, 0, '.', ''));
+$pdf->Ln();
+
+// Sumar el IVA al total y mostrar total con IVA
+$totalConIVA = $total + $iva;
+$pdf->Cell(40, 10, "Total con IVA: $" . number_format($totalConIVA, 0, '.', ''));
+$pdf->Ln();
+
 $pdf->Cell(40, 10, "Medio de Pago: " . $medioPago);
 $pdf->Ln();
-$pdf->Cell(40, 10, "Diferencia: $" . $diferencia);
+$pdf->Cell(40, 10, "Diferencia: $" . number_format($diferencia, 0, '.', ''));
 
 // Enviar encabezados para forzar la descarga del PDF
 header('Content-Type: application/pdf');
