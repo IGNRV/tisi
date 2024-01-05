@@ -243,6 +243,8 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
 
 document.getElementById('registrarPago').addEventListener('click', function() {
     var medioPago = document.getElementById('medioPago').value;
+    var medioPagoSelect = document.getElementById('medioPago');
+    var medioPagoNombre = medioPagoSelect.options[medioPagoSelect.selectedIndex].text;
     var total = parseFloat(document.getElementById('totalPrecio').textContent.replace('Total: $', ''));
     var montoPagadoCliente = parseFloat(document.getElementById('montopagar').value);
     var idUsuario = '<?php echo $_SESSION['id']; ?>';
@@ -289,7 +291,7 @@ document.getElementById('registrarPago').addEventListener('click', function() {
         console.error('Error:', error);
         alert("Error al registrar el pago.");
     });
-    window.open('generar_boleta.php?medioPago=' + medioPago + '&total=' + total + '&diferencia=' + encodeURIComponent(diferencia) + '&productosVendidos=' + encodeURIComponent(JSON.stringify(productosVendidos)), '_blank');
+    window.open('generar_boleta.php?medioPago=' + encodeURIComponent(medioPagoNombre) + '&total=' + total + '&diferencia=' + encodeURIComponent(diferencia) + '&productosVendidos=' + encodeURIComponent(JSON.stringify(productosVendidos)), '_blank');
 
 });
 

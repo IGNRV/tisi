@@ -2,7 +2,7 @@
 require_once 'fpdf/fpdf.php'; // Asegúrate de que este es el camino correcto a FPDF
 
 // Recoger los datos pasados desde registrar_pago.php
-$medioPago = $_GET['medioPago'];
+$medioPago = urldecode($_GET['medioPago']); // Asegúrate de decodificar el valor
 $total = $_GET['total'];
 $diferencia = $_GET['diferencia'];
 $productosVendidos = json_decode($_GET['productosVendidos'], true);
