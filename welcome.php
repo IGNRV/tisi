@@ -266,6 +266,7 @@ document.getElementById('registrarPago').addEventListener('click', function() {
 
     // Agregar productosVendidos al cuerpo de la solicitud
     var formData = new FormData();
+    var diferencia = document.getElementById('diferencia').value;
     formData.append('medioPago', medioPago);
     formData.append('total', total);
     formData.append('diferencia', total - montoPagadoCliente);
@@ -288,7 +289,7 @@ document.getElementById('registrarPago').addEventListener('click', function() {
         console.error('Error:', error);
         alert("Error al registrar el pago.");
     });
-    window.open('generar_boleta.php?medioPago=' + medioPago + '&total=' + total + '&diferencia=' + diferencia + '&productosVendidos=' + encodeURIComponent(JSON.stringify(productosVendidos)), '_blank');
+    window.open('generar_boleta.php?medioPago=' + medioPago + '&total=' + total + '&diferencia=' + encodeURIComponent(diferencia) + '&productosVendidos=' + encodeURIComponent(JSON.stringify(productosVendidos)), '_blank');
 
 });
 
