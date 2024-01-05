@@ -90,6 +90,9 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
     </div>
 </div>
 <div id="totalPrecio" style="font-weight: bold;">Total: $0</div>
+<div id="iva" style="font-weight: bold;">IVA (19%): $0</div>
+<div id="totalConIva" style="font-weight: bold;">Total con IVA: $0</div>
+
 
 <div class="form-group">
     <label for="medioPago">Medio de Pago</label>

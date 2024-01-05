@@ -139,16 +139,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     function calcularTotal() {
-        var filas = tablaSeleccionados.rows;
-        var total = 0;
+    var filas = tablaSeleccionados.rows;
+    var total = 0;
 
-        for (var i = 0; i < filas.length; i++) {
-            var precio = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
-            var cantidad = parseInt(filas[i].cells[2].textContent);
-            total += precio * cantidad;
-        }
+    for (var i = 0; i < filas.length; i++) {
+        var precio = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
+        var cantidad = parseInt(filas[i].cells[2].textContent);
+        total += precio * cantidad;
+    }
 
-        document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed(0);
+    var iva = total * 0.19; // Calcula el 19% de IVA del total
+    var totalConIva = total + iva; // Suma el IVA al total
+
+    // Muestra el total, el IVA y el total con IVA
+    document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed(0);
+    document.getElementById('iva').textContent = 'IVA (19%): $' + iva.toFixed(0);
+    document.getElementById('totalConIva').textContent = 'Total con IVA: $' + totalConIva.toFixed(0);
 
         // Actualizar el monto a pagar si el checkbox está marcado
         if (document.getElementById('usarTotal').checked) {
@@ -248,6 +254,8 @@ document.getElementById('registrarPago').addEventListener('click', function() {
     var total = parseFloat(document.getElementById('totalPrecio').textContent.replace('Total: $', ''));
     var montoPagadoCliente = parseFloat(document.getElementById('montopagar').value);
     var idUsuario = '<?php echo $_SESSION['id']; ?>';
+    var iva = parseFloat(document.getElementById('iva').textContent.replace('IVA (19%): $', ''));
+    var totalConIva = parseFloat(document.getElementById('totalConIva').textContent.replace('Total con IVA: $', ''));
 
     if (montoPagadoCliente < total) {
         // Si el monto pagado es menor que el total, mostrar un mensaje y no proceder
@@ -269,6 +277,8 @@ document.getElementById('registrarPago').addEventListener('click', function() {
     // Agregar productosVendidos al cuerpo de la solicitud
     var formData = new FormData();
     var diferencia = document.getElementById('diferencia').value;
+    formData.append('iva', iva);
+    formData.append('totalConIva', totalConIva);
     formData.append('medioPago', medioPago);
     formData.append('total', total);
     formData.append('diferencia', total - montoPagadoCliente);

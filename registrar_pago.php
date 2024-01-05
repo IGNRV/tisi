@@ -8,12 +8,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $idUsuario = $_POST['idUsuario'];
     $montoPagadoCliente = $_POST['montoPagadoCliente'];
     $fechaActual = date("Y-m-d");
+    $iva = $_POST['iva'];
+    $totalConIva = $_POST['totalConIva'];
 
-    $query = "INSERT INTO detalles_transaccion (medio_de_pago, total, diferencia, monto_pagado_cliente, id_usuario, date_created) VALUES (?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO detalles_transaccion (medio_de_pago, total, iva, total_con_iva, diferencia, monto_pagado_cliente, id_usuario, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
-        $diferencia = $montoPagadoCliente - $total; // Calcular la diferencia aquí
-        $stmt->bind_param("iidssi", $medioPago, $total, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
+        $diferencia = $montoPagadoCliente - $total; // Calcular la diferencia
+        // Asegúrate de pasar $iva y $totalConIva a la consulta
+        $stmt->bind_param("iidddssi", $medioPago, $total, $iva, $totalConIva, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
         $stmt->execute();
 
         $productosVendidos = json_decode($_POST['productosVendidos'], true);
