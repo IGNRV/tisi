@@ -145,6 +145,9 @@ document.getElementById('generarPdf').addEventListener('click', function() {
         let filas = tabla.querySelectorAll('tbody tr');
         let datosTabla = [];
 
+        // Agregar el nombre del medio de pago al inicio de cada conjunto de datos de tabla
+        let nombreMedioPago = tabla.previousSibling.textContent; // Asume que es el elemento inmediatamente antes de la tabla
+        datosTabla.push([nombreMedioPago]);
         // Agregar encabezados
         let datosEncabezados = [];
         encabezados.forEach(encabezado => {
