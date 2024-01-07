@@ -39,8 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $direccion = $_POST['direccion'] ?? '';
     $comuna = $_POST['comuna'] ?? '';
 
-    // Preparar la sentencia SQL para insertar o actualizar
-    $query = "REPLACE INTO negocio (razon_social, rut, direccion, comuna, id_usuario) VALUES (?, ?, ?, ?, ?)";
+    // Verificar si ya existen datos y elegir la consulta adecuada
+    $query = $result->num_rows > 0 ? 
+        "UPDATE negocio SET razon_social = ?, rut = ?, direccion = ?, comuna = ? WHERE id_usuario = ?" :
+        "INSERT INTO negocio (razon_social, rut, direccion, comuna, id_usuario) VALUES (?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("ssssi", $razonSocial, $rut, $direccion, $comuna, $idUsuario);
@@ -79,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php if (isset($mensaje)): ?>
         <div class="alert alert-info"><?php echo $mensaje; ?></div>
     <?php endif; ?>
-    <form action="configuracion.php" method="post">
+    <form action="welcome.php?page=configuracion" method="post">
         <div class="form-group">
             <label for="razon_social">Razón Social:</label>
             <input type="text" class="form-control" id="razon_social" name="razon_social" required value="<?php echo htmlspecialchars($datosNegocio['razon_social']); ?>">
