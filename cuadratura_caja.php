@@ -45,6 +45,9 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
     <button type="submit" class="btn btn-primary">Buscar</button>
 </form>
 
+<button type="button" class="btn btn-primary" id="generarPdf">Generar PDF</button>
+
+
 <!-- Aquí es donde se mostrarán los resultados de la búsqueda -->
 <div id="resultadosCuadratura"></div>
 
@@ -55,7 +58,9 @@ function buscarCuadratura(event) {
     event.preventDefault(); // Evitar que el formulario se envíe de la manera tradicional
     
     var fecha = document.getElementById('fecha').value;
-    var medioPago = document.getElementById('medioPago').value;
+    var medioPagoSelect = document.getElementById('medioPago');
+    var medioPago = medioPagoSelect.value;
+    var medioPagoNombre = medioPagoSelect.options[medioPagoSelect.selectedIndex].text;
     var claveBusqueda = `${fecha}-${medioPago}`;
 
     // Verificar si ya se realizó esta búsqueda
@@ -72,6 +77,12 @@ function buscarCuadratura(event) {
     .then(response => response.json())
     .then(response => {
         const resultadosDiv = document.getElementById('resultadosCuadratura');
+
+        // Crear y añadir un elemento para mostrar el nombre del medio de pago
+        const medioPagoDiv = document.createElement('div');
+        medioPagoDiv.innerHTML = `<strong>Medio de Pago: ${medioPagoNombre}</strong>`;
+        resultadosDiv.appendChild(medioPagoDiv);
+
         const data = response.resultados;
         const totalAcumulado = response.totalAcumulado;
 
@@ -85,11 +96,11 @@ function buscarCuadratura(event) {
             <tr>
                 <th>Medio de pago</th>
                 <th>Total</th>
-                <th>Monto pagado por cliente</th>
+                <th>Total p. cliente</th>
                 <th>Diferencia</th>
                 <th>Fecha</th>
                 <th>IVA</th>
-                <th>Total con IVA</th>
+                <th>Total + IVA</th>
             </tr>
         `;
         tabla.appendChild(thead);
@@ -124,6 +135,56 @@ function buscarCuadratura(event) {
     })
     .catch(error => console.error('Error:', error));
 }
+
+document.getElementById('generarPdf').addEventListener('click', function() {
+    let tablas = document.querySelectorAll('#resultadosCuadratura table');
+    let datosParaPdf = [];
+
+    tablas.forEach(tabla => {
+        let encabezados = tabla.querySelectorAll('thead th');
+        let filas = tabla.querySelectorAll('tbody tr');
+        let datosTabla = [];
+
+        // Agregar encabezados
+        let datosEncabezados = [];
+        encabezados.forEach(encabezado => {
+            datosEncabezados.push(encabezado.textContent);
+        });
+        datosTabla.push(datosEncabezados);
+
+        // Agregar filas
+        filas.forEach(fila => {
+            let celdas = fila.querySelectorAll('td');
+            let datosFila = [];
+            celdas.forEach(celda => {
+                datosFila.push(celda.textContent);
+            });
+            datosTabla.push(datosFila);
+        });
+
+        datosParaPdf.push(datosTabla);
+    });
+
+    // Enviar los datos al servidor para generar el PDF
+    fetch('generar_pdf_cuadratura.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({tablas: datosParaPdf})
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        // Crear un enlace temporal para descargar el PDF
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = 'cuadratura.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    })
+    .catch(error => console.error('Error:', error));
+});
 
 
 </script>
