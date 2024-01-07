@@ -1,5 +1,13 @@
 <?php
 require_once 'fpdf/fpdf.php'; // Asegúrate de que este es el camino correcto a FPDF
+require_once 'db.php'; // Asume que db.php contiene la conexión a la base de datos
+
+session_start();
+
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("location: index.php");
+    exit;
+}
 
 // Recoger los datos pasados desde registrar_pago.php
 $medioPago = urldecode($_GET['medioPago']); // Asegúrate de decodificar el valor
@@ -7,12 +15,34 @@ $total = $_GET['total'];
 $diferencia = $_GET['diferencia'];
 $productosVendidos = json_decode($_GET['productosVendidos'], true);
 
+// Obtener los datos de la empresa
+$idUsuario = $_SESSION['id'];
+$query = "SELECT razon_social, rut, direccion, comuna FROM negocio WHERE id_usuario = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $idUsuario);
+$stmt->execute();
+$result = $stmt->get_result();
+$datosEmpresa = $result->fetch_assoc();
+$stmt->close();
+
 $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', 'B', 16);
 
-$pdf->Cell(40, 10, 'Boleta de Venta');
-$pdf->Ln(20);
+// Imprimir la información de la empresa en la boleta
+if ($datosEmpresa) {
+    $pdf->Cell(0, 10, 'Datos de la Empresa:', 0, 1);
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Cell(0, 10, 'Razon Social: ' . $datosEmpresa['razon_social'], 0, 1);
+    $pdf->Cell(0, 10, 'RUT: ' . $datosEmpresa['rut'], 0, 1);
+    $pdf->Cell(0, 10, 'Domicilio: ' . $datosEmpresa['direccion'], 0, 1);
+    $pdf->Cell(0, 10, 'Comuna: ' . $datosEmpresa['comuna'], 0, 1);
+    $pdf->Ln(10);
+}
+
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->Cell(0, 10, 'Boleta de Venta', 0, 1, 'C');
+$pdf->Ln(10);
 
 // Listar los productos vendidos
 $pdf->SetFont('Arial', 'B', 12);
