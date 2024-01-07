@@ -9,19 +9,24 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
+// Consulta para obtener los nombres de los medios de pago
 $query_medios_pago = "SELECT id_medios_de_pago, nombre_medio_pago FROM medios_de_pago";
 $medios_pago = [];
+$medios_pago_map = []; // Mapa para convertir ID de medio de pago en nombre
 if ($stmt = $conn->prepare($query_medios_pago)) {
     $stmt->execute();
     $result = $stmt->get_result();
     while ($row = $result->fetch_assoc()) {
         $medios_pago[] = $row;
+        $medios_pago_map[$row['id_medios_de_pago']] = $row['nombre_medio_pago']; // Guardar en el mapa
     }
     $stmt->close();
 } else {
     echo "Error al obtener los medios de pago: " . $conn->error;
 }
 
+// Pasar el mapa de medios de pago a JavaScript
+echo "<script>var mediosPagoMap = " . json_encode($medios_pago_map) . ";</script>";
 ?>
 
 <!-- Formulario para la cuadratura de caja -->
@@ -110,7 +115,7 @@ function buscarCuadratura(event) {
         data.forEach(transaccion => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${transaccion.medio_de_pago}</td>
+                <td>${mediosPagoMap[transaccion.medio_de_pago]}</td>
                 <td>${transaccion.total}</td>
                 <td>${transaccion.monto_pagado_cliente}</td>
                 <td>${transaccion.diferencia}</td>

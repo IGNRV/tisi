@@ -62,13 +62,15 @@ require_once 'db.php';
                     case 'products':
                         include 'product_stock.php';
                         break;
+                    case 'configuracion':
+                        include 'configuracion.php';
+                        break;
                     case 'categorias':
                         include 'categorias.php';
                         break;
                     case 'cuadratura':
                         include 'cuadratura_caja.php';
                         break;
-                    // Agrega más casos según sea necesario
                     default:
                         include 'buscar_productos.php';
                         break;
