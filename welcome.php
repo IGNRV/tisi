@@ -44,6 +44,33 @@ require_once 'db.php';
     overflow-y: auto; /* Permite scroll dentro del sidebar si es necesario */
     z-index: 1040; /* Mayor que el z-index del navbar para superponerse sobre él */
   }
+  #resultados-busqueda li {
+    cursor: pointer;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#resultados-busqueda li:hover {
+    background-color: #f8f8f8;
+}
+
+/* Estilos para la tabla de productos seleccionados */
+#tabla-seleccionados thead {
+    background-color: #3f51b5;
+    color: white;
+}
+
+#tabla-seleccionados tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+#resultados-busqueda {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.table {
+    margin-bottom: 20px;
+}
 </style>
 
 
@@ -137,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         li.addEventListener('click', function() {
                             agregarProductoSeleccionado(producto);
                         });
+                        li.style.fontSize = '15px'; // Aplicar el font-size 15px
                         resultadosDiv.appendChild(li);
                     }
                 });
@@ -207,6 +235,7 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
         var btnEditar = document.createElement('button');
         btnEditar.textContent = 'Editar Cantidad';
         btnEditar.className = 'btn btn-primary';
+        btnEditar.style.fontSize = '12px'; // Reducir tamaño de letra del botón
         btnEditar.dataset.producto = JSON.stringify(producto); // Almacenar el producto en el botón
         btnEditar.onclick = function() {
             editarCantidad(this);

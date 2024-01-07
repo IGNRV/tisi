@@ -132,7 +132,7 @@ function buscarCuadratura(event) {
 
         // Crear y añadir un elemento para mostrar el total acumulado
         const totalDiv = document.createElement('div');
-        totalDiv.innerHTML = `<strong>Total acumulado con IVA: $${totalAcumulado.toFixed(2)}</strong>`;
+        totalDiv.innerHTML = `<strong>Total acumulado con IVA: $${totalAcumulado.toFixed(0)}</strong>`;
         resultadosDiv.appendChild(totalDiv);
 
         // Marcar esta búsqueda como realizada

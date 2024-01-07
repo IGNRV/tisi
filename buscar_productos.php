@@ -48,28 +48,37 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 ?>
 
 
+<div class="container-fluid">
+    <div class="row">
 
+        <!-- Columna izquierda: Formulario de búsqueda y tabla de productos seleccionados -->
+        <div class="col-md-6">
 <!-- Formulario para buscar productos -->
-<form action="welcome.php?page=buscar_productos" method="post">
+<form action="welcome.php?page=buscar_productos" method="post" class="my-4">
     <div class="form-group">
-        <label for="buscar">Buscar Producto</label>
+        <label for="buscar" style="font-size: 18px;">Buscar Producto</label>
         <input type="text" name="buscar" class="form-control" id="buscar">
-        <ul id="resultados-busqueda"></ul>
     </div>
+    <!-- Lista para mostrar resultados de búsqueda -->
+    <ul id="resultados-busqueda" class="list-group"></ul>
 </form>
-<table class="table" id="tabla-seleccionados">
-    <thead>
+
+<table class="table table-striped" id="tabla-seleccionados">
+    <thead class="thead-dark" style="font-size: 15px;">
         <tr>
-            <th>Producto</th>
+            <th>PX</th>
             <th>Precio</th>
             <th>Cantidad</th>
             <th>Categoría</th>
             <th>Acciones</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody style="font-size: 15px;">
     </tbody>
 </table>
+</div>
+<div class="col-md-6">
+
 <div class="modal fade" id="modalCantidad" tabindex="-1" role="dialog" aria-labelledby="modalCantidadLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -89,14 +98,14 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
         </div>
     </div>
 </div>
-<div id="totalPrecio" style="font-weight: bold;">Total: $0</div>
-<div id="iva" style="font-weight: bold;">IVA (19%): $0</div>
-<div id="totalConIva" style="font-weight: bold;">Total con IVA: $0</div>
+<div id="totalPrecio" style="font-weight: bold; font-size: 18px;">Total: $0</div>
+<div id="iva" style="font-weight: bold; font-size: 18px;">IVA (19%): $0</div>
+<div id="totalConIva" style="font-weight: bold; font-size: 18px;">Total con IVA: $0</div>
 
 
 <div class="form-group">
-    <label for="medioPago">Medio de Pago</label>
-    <select class="form-control" id="medioPago">
+    <label for="medioPago" style="font-size: 18px;">Medio de Pago</label>
+    <select class="form-control" id="medioPago" style="font-size: 15px;">
         <?php foreach ($medios_pago as $medio) : ?>
             <option value="<?php echo htmlspecialchars($medio['id_medios_de_pago']); ?>"><?php echo htmlspecialchars($medio['nombre_medio_pago']); ?></option>
         <?php endforeach; ?>
@@ -105,21 +114,25 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 
 
 <div>
-    <label for="montopagar">Monto a pagar</label>
-    <input type="text" name="montopagar" class="form-control" id="montopagar">
+    <label for="montopagar" style="font-size: 18px;">Monto a pagar</label>
+    <input type="text" name="montopagar" class="form-control" style="font-size: 15px;" id="montopagar">
 </div>
 
 <div class="form-check">
     <input class="form-check-input" type="checkbox" id="usarTotal">
-    <label class="form-check-label" for="usarTotal">
+    <label class="form-check-label" for="usarTotal" style="font-size: 15px;">
         Usar total de la compra
     </label>
 </div>
 
 <div>
-    <label for="diferencia">Diferencia</label>
-    <input type="text" name="diferencia" class="form-control" id="diferencia" disabled>
+    <label for="diferencia" style="font-size: 18px;">Diferencia</label>
+    <input type="text" name="diferencia" class="form-control" id="diferencia" disabled style="font-size: 15px;">
 </div>
 
 <button type="button" class="btn btn-primary" id="registrarPago">REGISTRAR PAGO</button>
 
+</div>
+
+</div>
+</div>
