@@ -12,6 +12,15 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
 $idUsuario = $_SESSION['id']; // Asume que 'id' es la clave de sesión donde se almacena el id del usuario
 
+$estadoSuscripcion = 0;
+if ($estadoSuscripcionStmt = $conn->prepare("SELECT estado_suscripcion FROM usuarios WHERE id = ?")) {
+    $estadoSuscripcionStmt->bind_param("i", $idUsuario);
+    $estadoSuscripcionStmt->execute();
+    $estadoSuscripcionStmt->bind_result($estadoSuscripcion);
+    $estadoSuscripcionStmt->fetch();
+    $estadoSuscripcionStmt->close();
+}
+
 // Intentar obtener los datos existentes de la empresa
 $query = "SELECT razon_social, rut, direccion, comuna FROM negocio WHERE id_usuario = ?";
 $datosNegocio = [
@@ -84,21 +93,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="welcome.php?page=configuracion" method="post">
         <div class="form-group">
             <label for="razon_social">Razón Social:</label>
-            <input type="text" class="form-control" id="razon_social" name="razon_social" required value="<?php echo htmlspecialchars($datosNegocio['razon_social']); ?>">
+            <input type="text" class="form-control" id="razon_social" name="razon_social" required value="<?php echo htmlspecialchars($datosNegocio['razon_social']); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         </div>
         <div class="form-group">
             <label for="rut">RUT:</label>
-            <input type="text" class="form-control" id="rut" name="rut" required value="<?php echo htmlspecialchars($datosNegocio['rut']); ?>">
+            <input type="text" class="form-control" id="rut" name="rut" required value="<?php echo htmlspecialchars($datosNegocio['rut']); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         </div>
         <div class="form-group">
             <label for="direccion">Dirección:</label>
-            <input type="text" class="form-control" id="direccion" name="direccion" required value="<?php echo htmlspecialchars($datosNegocio['direccion']); ?>">
+            <input type="text" class="form-control" id="direccion" name="direccion" required value="<?php echo htmlspecialchars($datosNegocio['direccion']); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         </div>
         <div class="form-group">
             <label for="comuna">Comuna:</label>
-            <input type="text" class="form-control" id="comuna" name="comuna" required value="<?php echo htmlspecialchars($datosNegocio['comuna']); ?>">
+            <input type="text" class="form-control" id="comuna" name="comuna" required value="<?php echo htmlspecialchars($datosNegocio['comuna']); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         </div>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="submit" class="btn btn-primary" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Guardar</button>
     </form>
 </div>
 

@@ -9,6 +9,19 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
+// Consultar el estado de suscripción del usuario actual
+$estadoSuscripcion = 0; // Valor predeterminado
+if (isset($_SESSION['id'])) {
+    $estadoSuscripcionQuery = "SELECT estado_suscripcion FROM usuarios WHERE id = ?";
+    if ($estadoSuscripcionStmt = $conn->prepare($estadoSuscripcionQuery)) {
+        $estadoSuscripcionStmt->bind_param("i", $_SESSION['id']);
+        $estadoSuscripcionStmt->execute();
+        $estadoSuscripcionStmt->bind_result($estadoSuscripcion);
+        $estadoSuscripcionStmt->fetch();
+        $estadoSuscripcionStmt->close();
+    }
+}
+
 // Consulta para obtener los nombres de los medios de pago
 $query_medios_pago = "SELECT id_medios_de_pago, nombre_medio_pago FROM medios_de_pago";
 $medios_pago = [];
@@ -33,12 +46,12 @@ echo "<script>var mediosPagoMap = " . json_encode($medios_pago_map) . ";</script
 <form id="formCuadratura" onsubmit="buscarCuadratura(event)">
     <div class="form-group">
         <label for="fecha">Fecha</label>
-        <input type="date" name="fecha" class="form-control" id="fecha" required>
+        <input type="date" name="fecha" class="form-control" id="fecha" required <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
     </div>
 
     <div class="form-group">
         <label for="medioPago">Medio de Pago</label>
-        <select class="form-control" id="medioPago" name="medioPago" required>
+        <select class="form-control" id="medioPago" name="medioPago" required <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
             <?php foreach ($medios_pago as $medio): ?>
                 <option value="<?php echo htmlspecialchars($medio['id_medios_de_pago']); ?>">
                     <?php echo htmlspecialchars($medio['nombre_medio_pago']); ?>
@@ -47,10 +60,10 @@ echo "<script>var mediosPagoMap = " . json_encode($medios_pago_map) . ";</script
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary">Buscar</button>
+    <button type="submit" class="btn btn-primary" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Buscar</button>
 </form>
 
-<button type="button" class="btn btn-primary" id="generarPdf">Generar PDF</button>
+<button type="button" class="btn btn-primary" id="generarPdf" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Generar PDF</button>
 
 
 <!-- Aquí es donde se mostrarán los resultados de la búsqueda -->

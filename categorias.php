@@ -4,9 +4,20 @@ require_once 'db.php';
 session_start();
 
 $mensaje_exito = '';
+$estadoSuscripcion = 0; // Estado de suscripción por defecto
 
 if (isset($_SESSION['id'])) {
     $id_usuario = $_SESSION['id'];
+
+    // Comprobar el estado de suscripción del usuario
+    $estadoSuscripcionQuery = "SELECT estado_suscripcion FROM usuarios WHERE id = ?";
+    if ($estadoSuscripcionStmt = $conn->prepare($estadoSuscripcionQuery)) {
+        $estadoSuscripcionStmt->bind_param("i", $id_usuario);
+        $estadoSuscripcionStmt->execute();
+        $estadoSuscripcionStmt->bind_result($estadoSuscripcion);
+        $estadoSuscripcionStmt->fetch();
+        $estadoSuscripcionStmt->close();
+    }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['id_categoria'], $_POST['nombre_categoria'])) {
@@ -62,15 +73,15 @@ if (isset($_SESSION['id'])) {
 
         if ($result->num_rows > 0) {
             echo '<div class="form-group">';
-            echo '<select class="form-control" id="categoriaSelect" name="categoria">';
+            echo '<select class="form-control" id="categoriaSelect" name="categoria"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>';
             while ($row = $result->fetch_assoc()) {
                 echo '<option value="' . $row['id_categoria'] . '">' . htmlspecialchars($row['nombre_categoria']) . '</option>';
             }
             echo '</select>';
             echo '</div>';
 
-            echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal">Editar</button>';
-            echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategoryModal">Agregar categoría</button>';
+            echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>Editar</button>';
+            echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategoryModal"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>Agregar categoría</button>';
 
             echo '
             <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">

@@ -3,8 +3,18 @@
 require_once 'db.php';
 session_start();
 
+$estadoSuscripcion = 0; // Valor predeterminado
 if (isset($_SESSION['id'])) {
     $id_usuario = $_SESSION['id'];
+
+    $estadoSuscripcionQuery = "SELECT estado_suscripcion FROM usuarios WHERE id = ?";
+    if ($estadoSuscripcionStmt = $conn->prepare($estadoSuscripcionQuery)) {
+        $estadoSuscripcionStmt->bind_param("i", $_SESSION['id']);
+        $estadoSuscripcionStmt->execute();
+        $estadoSuscripcionStmt->bind_result($estadoSuscripcion);
+        $estadoSuscripcionStmt->fetch();
+        $estadoSuscripcionStmt->close();
+    }
 
     // Obtener categorías disponibles
     $categorias = [];
@@ -37,14 +47,14 @@ if (isset($_SESSION['id'])) {
 ?>
 
 <div class="mb-3">
-  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addProductModal">
+  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addProductModal" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
     Agregar Producto
   </button>
 </div>
 
 <!-- Botón para carga masiva -->
 <div class="mb-3">
-    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#massUploadModal">
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#massUploadModal" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         Carga Masiva de Productos
     </button>
 </div>
@@ -68,8 +78,8 @@ if (isset($_SESSION['id'])) {
                 <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
                 <td><?php echo htmlspecialchars($row['stock']); ?></td>
                 <td>
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal<?php echo $row['id_producto']; ?>">Editar</button>
-                    <a href="delete_product.php?id=<?php echo $row['id_producto']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de querer eliminar este producto?');">Eliminar</a>
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal<?php echo $row['id_producto']; ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Editar</button>
+                    <a href="delete_product.php?id=<?php echo $row['id_producto']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de querer eliminar este producto?');" >Eliminar</a>
                 </td>
             </tr>
 
