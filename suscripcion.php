@@ -35,7 +35,7 @@ if ($stmt = $conn->prepare($query)) {
                 "email" => $userEmail, // Utiliza el email recuperado de la base de datos
                 "paymentMethod" => 9,
                 "urlConfirmation" => Config::get("BASEURL") . "/confirm.php",
-                "urlReturn" => Config::get("BASEURL") . "/result.php"
+                "urlReturn" => Config::get("BASEURL") . "/welcome.php?page=result"
             );
             
             try {

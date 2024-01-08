@@ -89,6 +89,9 @@ require_once 'db.php';
                     case 'products':
                         include 'product_stock.php';
                         break;
+                    case 'result':
+                        include 'result.php';
+                        break;
                     case 'configuracion':
                         include 'configuracion.php';
                         break;
