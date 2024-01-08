@@ -34,12 +34,34 @@ try {
                 if ($updateStmt = $conn->prepare($updateQuery)) {
                     $updateStmt->bind_param("i", $oralisisUserId);
                     $updateStmt->execute();
-                    if ($updateStmt->affected_rows == 0) {
-                        echo "No se actualizó ningún registro. Verifica el ID del usuario.";
-                    } else {
-                        echo "Suscripción actualizada con éxito.";
-                    }
                     $updateStmt->close();
+
+                    // Verificar si ya existe una suscripción para el usuario
+                    $checkSuscripcionQuery = "SELECT id FROM suscripcion_tisi WHERE id_usuario = ?";
+                    if ($checkStmt = $conn->prepare($checkSuscripcionQuery)) {
+                        $checkStmt->bind_param("i", $oralisisUserId);
+                        $checkStmt->execute();
+                        $checkStmt->store_result();
+
+                        if ($checkStmt->num_rows > 0) {
+                            // Actualizar suscripciones_pagadas en la tabla suscripcion_tisi
+                            $updateSuscripcionQuery = "UPDATE suscripcion_tisi SET suscripciones_pagadas = suscripciones_pagadas + 1 WHERE id_usuario = ?";
+                            if ($updateSuscripcionStmt = $conn->prepare($updateSuscripcionQuery)) {
+                                $updateSuscripcionStmt->bind_param("i", $oralisisUserId);
+                                $updateSuscripcionStmt->execute();
+                                $updateSuscripcionStmt->close();
+                            }
+                        } else {
+                            // Insertar nueva suscripción en la tabla suscripcion_tisi
+                            $insertSuscripcionQuery = "INSERT INTO suscripcion_tisi (dia_suscripcion, tipo_suscripcion, fecha_activacion, id_usuario, suscripciones_pagadas) VALUES (1, 1, NOW(), ?, 1)";
+                            if ($insertSuscripcionStmt = $conn->prepare($insertSuscripcionQuery)) {
+                                $insertSuscripcionStmt->bind_param("i", $oralisisUserId);
+                                $insertSuscripcionStmt->execute();
+                                $insertSuscripcionStmt->close();
+                            }
+                        }
+                        $checkStmt->close();
+                    }
                 } else {
                     throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
                 }
