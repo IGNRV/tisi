@@ -98,6 +98,9 @@ require_once 'db.php';
                     case 'cuadratura':
                         include 'cuadratura_caja.php';
                         break;
+                    case 'suscripcion':
+                        include 'suscripcion.php';
+                        break;
                     default:
                         include 'buscar_productos.php';
                         break;

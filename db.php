@@ -1,7 +1,7 @@
 <?php
 $dbHost = 'localhost';
 $dbUsername = 'root';
-$dbPassword = 'Polaco12345$$##';
+$dbPassword = 'GxCOgyXr1b5G8o@599Pm&%T';
 $dbName = 'trackitsellit';
 
 $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
