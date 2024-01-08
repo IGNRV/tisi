@@ -25,17 +25,18 @@ if ($stmt = $conn->prepare($query)) {
 
         if ($estado_suscripcion == 0) {
             echo "Suscripción no activa.";
-            // Inicia una transacción de pago en Flow
+
             // Prepara el arreglo de datos
+            $commerceOrder = rand(1100, 2000);
             $params = array(
-                "commerceOrder" => rand(1100, 2000),
+                "commerceOrder" => $commerceOrder,
                 "subject" => "Pago de suscripción",
                 "currency" => "CLP",
                 "amount" => 5000,
-                "email" => $userEmail, // Utiliza el email recuperado de la base de datos
+                "email" => $userEmail,
                 "paymentMethod" => 9,
                 "urlConfirmation" => Config::get("BASEURL") . "/confirm.php",
-                "urlReturn" => Config::get("BASEURL") . "/welcome.php?page=result"
+                "urlReturn" => Config::get("BASEURL") . "/result.php"
             );
             
             try {
@@ -43,7 +44,16 @@ if ($stmt = $conn->prepare($query)) {
                 $flowApi = new FlowApi();
                 // Ejecuta el servicio
                 $response = $flowApi->send("payment/create", $params, "POST");
-                /* var_dump($response); */
+                
+                // Prepara la consulta SQL para registrar el pago
+                $insertQuery = "INSERT INTO registro_de_pagos (orden_comercio, asunto, monto_del_pago, token, oralisis_user_id, estado) VALUES (?, ?, ?, ?, ?, ?)";
+                if ($insertStmt = $conn->prepare($insertQuery)) {
+                    $estado = 1;
+                    $insertStmt->bind_param("isisii", $commerceOrder, $params["subject"], $params["amount"], $response["token"], $userId, $estado);
+                    $insertStmt->execute();
+                    $insertStmt->close();
+                }
+
                 // Prepara url para redireccionar el browser del pagador
                 $redirect = $response["url"] . "?token=" . $response["token"];
                 echo "<button onclick=\"window.location.href = '$redirect';\">Pagar suscripción</button>";

@@ -1,20 +1,9 @@
 <?php
-// result.php
+session_start();
+
 ini_set('display_errors', 1);
 require(__DIR__ . "/PHP-API-CLIENT/lib/FlowApi.class.php");
 require_once 'db.php';
-
-session_start();
-
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    echo "No estás logueado. Por favor, inicia sesión.";
-    exit;
-}
-
-if (!isset($_SESSION['id'])) {
-    echo "ID de sesión no encontrado.";
-    exit;
-}
 
 echo '<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">';
 
@@ -28,19 +17,34 @@ try {
     $serviceName = "payment/getStatus";
     $flowApi = new FlowApi();
     $response = $flowApi->send($serviceName, $params, "GET");
-    
-    // Asegúrate de validar la respuesta y el estado del pago
-    if ($response['status'] == 2) { // Suponiendo que 2 es un pago exitoso
-        $userId = $_SESSION['id'];
 
-        $updateQuery = "UPDATE usuarios SET estado_suscripcion = 1 WHERE id = ?";
-        if ($stmt = $conn->prepare($updateQuery)) {
-            $stmt->bind_param("i", $userId);
+    if ($response['status'] == 2) { // Suponiendo que 2 es un pago exitoso
+        $commerceOrder = $response['commerceOrder'];
+
+        // Buscar el usuario correspondiente en la tabla registro_de_pagos
+        $query = "SELECT oralisis_user_id FROM registro_de_pagos WHERE orden_comercio = ?";
+        if ($stmt = $conn->prepare($query)) {
+            $stmt->bind_param("i", $commerceOrder);
             $stmt->execute();
-            if ($stmt->affected_rows == 0) {
-                echo "No se actualizó ningún registro. Verifica el ID del usuario.";
+            $stmt->store_result();
+            $stmt->bind_result($oralisisUserId);
+            if ($stmt->fetch()) {
+                // Actualizar estado_suscripcion en la tabla usuarios
+                $updateQuery = "UPDATE usuarios SET estado_suscripcion = 1 WHERE id = ?";
+                if ($updateStmt = $conn->prepare($updateQuery)) {
+                    $updateStmt->bind_param("i", $oralisisUserId);
+                    $updateStmt->execute();
+                    if ($updateStmt->affected_rows == 0) {
+                        echo "No se actualizó ningún registro. Verifica el ID del usuario.";
+                    } else {
+                        echo "Suscripción actualizada con éxito.";
+                    }
+                    $updateStmt->close();
+                } else {
+                    throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
+                }
             } else {
-                echo "Suscripción actualizada con éxito.";
+                echo "No se encontró el registro correspondiente en registro_de_pagos.";
             }
             $stmt->close();
         } else {
