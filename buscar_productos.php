@@ -3,6 +3,19 @@
 require_once 'db.php';
 session_start();
 
+// Consultar el estado de suscripción del usuario actual
+$estadoSuscripcion = 0; // Valor predeterminado
+if (isset($_SESSION['id'])) {
+    $estadoSuscripcionQuery = "SELECT estado_suscripcion FROM usuarios WHERE id = ?";
+    if ($estadoSuscripcionStmt = $conn->prepare($estadoSuscripcionQuery)) {
+        $estadoSuscripcionStmt->bind_param("i", $_SESSION['id']);
+        $estadoSuscripcionStmt->execute();
+        $estadoSuscripcionStmt->bind_result($estadoSuscripcion);
+        $estadoSuscripcionStmt->fetch();
+        $estadoSuscripcionStmt->close();
+    }
+}
+
 if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     $buscar = $_POST['buscar'];
 
@@ -57,7 +70,7 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 <form action="welcome.php?page=buscar_productos" method="post" class="my-4">
     <div class="form-group">
         <label for="buscar" style="font-size: 18px;">Buscar Producto</label>
-        <input type="text" name="buscar" class="form-control" id="buscar">
+        <input type="text" name="buscar" class="form-control" id="buscar" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
     </div>
     <!-- Lista para mostrar resultados de búsqueda -->
     <ul id="resultados-busqueda" class="list-group"></ul>
@@ -99,13 +112,13 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
     </div>
 </div>
 <div id="totalPrecio" style="font-weight: bold; font-size: 18px;">Total: $0</div>
-<div id="iva" style="font-weight: bold; font-size: 18px;">IVA (19%): $0</div>
-<div id="totalConIva" style="font-weight: bold; font-size: 18px;">Total con IVA: $0</div>
+            <div id="iva" style="font-weight: bold; font-size: 18px;">IVA (19%): $0</div>
+            <div id="totalConIva" style="font-weight: bold; font-size: 18px;">Total con IVA: $0</div>
 
 
-<div class="form-group">
-    <label for="medioPago" style="font-size: 18px;">Medio de Pago</label>
-    <select class="form-control" id="medioPago" style="font-size: 15px;">
+            <div class="form-group">
+                <label for="medioPago" style="font-size: 18px;">Medio de Pago</label>
+                <select class="form-control" id="medioPago" style="font-size: 15px;" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         <?php foreach ($medios_pago as $medio) : ?>
             <option value="<?php echo htmlspecialchars($medio['id_medios_de_pago']); ?>"><?php echo htmlspecialchars($medio['nombre_medio_pago']); ?></option>
         <?php endforeach; ?>
@@ -114,23 +127,22 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 
 
 <div>
-    <label for="montopagar" style="font-size: 18px;">Monto a pagar</label>
-    <input type="text" name="montopagar" class="form-control" style="font-size: 15px;" id="montopagar">
-</div>
+                <label for="montopagar" style="font-size: 18px;">Monto a pagar</label>
+                <input type="text" name="montopagar" class="form-control" id="montopagar" style="font-size: 15px;" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+            </div>
 
-<div class="form-check">
-    <input class="form-check-input" type="checkbox" id="usarTotal">
-    <label class="form-check-label" for="usarTotal" style="font-size: 15px;">
-        Usar total de la compra
-    </label>
-</div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="usarTotal" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+                <label class="form-check-label" for="usarTotal" style="font-size: 15px;">Usar total de la compra</label>
+            </div>
 
-<div>
-    <label for="diferencia" style="font-size: 18px;">Diferencia</label>
-    <input type="text" name="diferencia" class="form-control" id="diferencia" disabled style="font-size: 15px;">
-</div>
 
-<button type="button" class="btn btn-primary" id="registrarPago">REGISTRAR PAGO</button>
+            <div>
+                <label for="diferencia" style="font-size: 18px;">Diferencia</label>
+                <input type="text" name="diferencia" class="form-control" id="diferencia" disabled style="font-size: 15px;">
+            </div>
+
+<button type="button" class="btn btn-primary" id="registrarPago" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>REGISTRAR PAGO</button>
 
 </div>
 
