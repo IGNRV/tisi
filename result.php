@@ -1,37 +1,59 @@
 <?php
-/**
- * Pagina del comercio para redireccion del pagador
- * A esta página Flow redirecciona al pagador pasando vía POST
- * el token de la transacción. En esta página el comercio puede
- * mostrar su propio comprobante de pago
- */
+// result.php
 ini_set('display_errors', 1);
 require(__DIR__ . "/PHP-API-CLIENT/lib/FlowApi.class.php");
+require_once 'db.php';
 
-// Incluir la hoja de estilos de Bootstrap
+session_start();
+
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    echo "No estás logueado. Por favor, inicia sesión.";
+    exit;
+}
+
+if (!isset($_SESSION['id'])) {
+    echo "ID de sesión no encontrado.";
+    exit;
+}
+
 echo '<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">';
 
 try {
-    // Recibe el token enviado por Flow
     if (!isset($_POST["token"])) {
         throw new Exception("No se recibió el token", 1);
     }
     $token = filter_input(INPUT_POST, 'token');
     $params = array("token" => $token);
 
-    // Indica el servicio a utilizar
     $serviceName = "payment/getStatus";
     $flowApi = new FlowApi();
     $response = $flowApi->send($serviceName, $params, "GET");
     
-    // Procesar la respuesta aquí (envío de la boleta, etc.)
+    // Asegúrate de validar la respuesta y el estado del pago
+    if ($response['status'] == 2) { // Suponiendo que 2 es un pago exitoso
+        $userId = $_SESSION['id'];
 
-    // Informar al usuario
+        $updateQuery = "UPDATE usuarios SET estado_suscripcion = 1 WHERE id = ?";
+        if ($stmt = $conn->prepare($updateQuery)) {
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            if ($stmt->affected_rows == 0) {
+                echo "No se actualizó ningún registro. Verifica el ID del usuario.";
+            } else {
+                echo "Suscripción actualizada con éxito.";
+            }
+            $stmt->close();
+        } else {
+            throw new Exception("Error al preparar la consulta: " . $conn->error);
+        }
+    } else {
+        echo "El pago no fue exitoso.";
+    }
+
     echo '<div class="alert alert-success" role="alert">';
     echo 'Se ha enviado la boleta de pago a tu correo electrónico. Serás redirigido al inicio en unos segundos.';
     echo '</div>';
 
-    // Redirigir al usuario después de 5 segundos
     echo '<script>';
     echo 'setTimeout(function(){ window.location.href = "https://trackitsellit.oralisisdataservice.cl/welcome.php"; }, 5000);';
     echo '</script>';
@@ -41,4 +63,6 @@ try {
     echo "Error: " . $e->getCode() . " - " . $e->getMessage();
     echo '</div>';
 }
+
+$conn->close();
 ?>
