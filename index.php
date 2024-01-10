@@ -6,6 +6,20 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Mostrar mensaje de éxito si existe
+if (isset($_SESSION['success_message'])) {
+    echo "<div class='alert alert-success'>" . $_SESSION['success_message'] . "</div>";
+    // Limpiar mensaje de éxito
+    unset($_SESSION['success_message']);
+}
+
+// Mostrar mensaje de error si existe
+if (isset($_SESSION['error_message'])) {
+    echo "<div class='alert alert-danger'>" . $_SESSION['error_message'] . "</div>";
+    // Limpiar mensaje de error
+    unset($_SESSION['error_message']);
+}
+
 
 // Verifica si el formulario ha sido enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -71,6 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
             </form>
+            <div class="mt-3">
+                <a href="https://trackitsellit.oralisisdataservice.cl/crear_usuario.php" class="btn btn-secondary">Crear Usuario</a>
+            </div>
         </div>
     </div>
 </div>

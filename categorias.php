@@ -81,7 +81,6 @@ if (isset($_SESSION['id'])) {
             echo '</div>';
 
             echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>Editar</button>';
-            echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategoryModal"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>Agregar categoría</button>';
 
             echo '
             <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
@@ -111,31 +110,7 @@ if (isset($_SESSION['id'])) {
               </div>
             </div>';
 
-            echo '
-            <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="addCategoryModalLabel">Agregar Nueva Categoría</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="addCategoryForm" method="post">
-                      <div class="form-group">
-                        <label for="newCategoryName">Nombre de la Nueva Categoría</label>
-                        <input type="text" class="form-control" id="newCategoryName" name="nueva_categoria">
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-success">Agregar</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>';
+            
         } else {
             echo 'No hay categorías disponibles.';
         }
@@ -143,6 +118,32 @@ if (isset($_SESSION['id'])) {
     } else {
         echo "Error al preparar la consulta: " . $conn->error;
     }
+    echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategoryModal"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>Agregar categoría</button>';
+    echo '
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addCategoryModalLabel">Agregar Nueva Categoría</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="addCategoryForm" method="post">
+              <div class="form-group">
+                <label for="newCategoryName">Nombre de la Nueva Categoría</label>
+                <input type="text" class="form-control" id="newCategoryName" name="nueva_categoria">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-success">Agregar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>';
 } else {
     echo "Usuario no autenticado.";
 }

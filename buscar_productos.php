@@ -65,13 +65,13 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
     <div class="row">
 
         <!-- Columna izquierda: Formulario de búsqueda y tabla de productos seleccionados -->
-        <div class="col-md-6">
+        <div class="col-sm-12 col-lg-6">
 <!-- Formulario para buscar productos -->
 <form action="welcome.php?page=buscar_productos" method="post" class="my-4">
-    <div class="form-group">
-        <label for="buscar" style="font-size: 18px;">Buscar Producto</label>
-        <input type="text" name="buscar" class="form-control" id="buscar" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
-    </div>
+<div class="form-group">
+                    <label for="buscar" class="h4">Buscar Producto</label>
+                    <input type="text" name="buscar" class="form-control" id="buscar" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+                </div>
     <!-- Lista para mostrar resultados de búsqueda -->
     <ul id="resultados-busqueda" class="list-group"></ul>
 </form>
@@ -90,7 +90,7 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
     </tbody>
 </table>
 </div>
-<div class="col-md-6">
+<div class="col-sm-12 col-lg-6">
 
 <div class="modal fade" id="modalCantidad" tabindex="-1" role="dialog" aria-labelledby="modalCantidadLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
