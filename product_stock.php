@@ -34,7 +34,7 @@ if (isset($_SESSION['id'])) {
         $mensaje_exito = 'Operación realizada con éxito.';
     }
 
-    $query = "SELECT id_producto, nombre_px, precio, id_categoria, stock FROM productos WHERE id_usuario = ?";
+    $query = "SELECT id_producto, nombre_px, precio, id_categoria, stock, kilogramos FROM productos WHERE id_usuario = ?";
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("i", $id_usuario);
         $stmt->execute();
@@ -67,6 +67,7 @@ if (isset($_SESSION['id'])) {
                 <th>Precio</th>
                 <th>Categoría</th>
                 <th>Stock</th>
+                <th>Kilogramos</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -77,6 +78,7 @@ if (isset($_SESSION['id'])) {
                 <td><?php echo htmlspecialchars($row['precio']); ?></td>
                 <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
                 <td><?php echo htmlspecialchars($row['stock']); ?></td>
+                <td><?php echo htmlspecialchars($row['kilogramos']); ?></td>
                 <td>
                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal<?php echo $row['id_producto']; ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Editar</button>
                     <a href="delete_product.php?id=<?php echo $row['id_producto']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de querer eliminar este producto?');" >Eliminar</a>
@@ -112,6 +114,10 @@ if (isset($_SESSION['id'])) {
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kilogramos</label>
+                                    <input type="text" name="kilogramos" class="form-control" value="<?php echo htmlspecialchars($row['kilogramos']); ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Stock</label>
@@ -190,10 +196,17 @@ if (isset($_SESSION['id'])) {
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Stock</label>
-                        <input type="text" name="stock" class="form-control">
-                    </div>
-                    <input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
+    <label>Tipo de Cantidad</label>
+    <select name="tipo_cantidad" class="form-control" id="tipoCantidad">
+        <option value="stock">Stock</option>
+        <option value="kilogramos">Kilogramos</option>
+    </select>
+</div>
+<div class="form-group">
+    <label>Cantidad</label>
+    <input type="text" name="cantidad" class="form-control">
+</div>
+<input type="hidden" name="id_usuario" value="<?php echo $id_usuario; ?>">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

@@ -7,14 +7,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre_px = $_POST['nombre_px'];
     $precio = $_POST['precio'];
     $id_categoria = $_POST['id_categoria'];
-    $stock = $_POST['stock'];
+    $tipo_cantidad = $_POST['tipo_cantidad'];
+    $cantidad = $_POST['cantidad'];
     $id_usuario = $_POST['id_usuario']; // Asegúrate de validar y limpiar este valor
 
     // Prepara la consulta para insertar el nuevo producto
-    $query = "INSERT INTO productos (nombre_px, precio, id_categoria, stock, id_usuario) VALUES (?, ?, ?, ?, ?)";
+    if ($tipo_cantidad == 'kilogramos') {
+        $query = "INSERT INTO productos (nombre_px, precio, id_categoria, kilogramos, id_usuario) VALUES (?, ?, ?, ?, ?)";
+    } else {
+        $query = "INSERT INTO productos (nombre_px, precio, id_categoria, stock, id_usuario) VALUES (?, ?, ?, ?, ?)";
+    }
 
     if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("sdiis", $nombre_px, $precio, $id_categoria, $stock, $id_usuario);
+        if ($tipo_cantidad == 'kilogramos') {
+            $stmt->bind_param("sdiis", $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
+        } else {
+            $stmt->bind_param("sdiis", $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
+        }
 
         if ($stmt->execute()) {
             header("Location: welcome.php?add_success=true");
