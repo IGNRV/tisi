@@ -73,17 +73,16 @@ if (isset($_SESSION['id'])) {
         </thead>
         <tbody>
             <?php while ($row = $result->fetch_assoc()) { ?>
-            <tr>
-                <td><?php echo htmlspecialchars($row['nombre_px']); ?></td>
-                <td><?php echo htmlspecialchars($row['precio']); ?></td>
-                <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
-                <td><?php echo htmlspecialchars($row['stock']); ?></td>
-                <td><?php echo htmlspecialchars($row['kilogramos']); ?></td>
-                <td>
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal<?php echo $row['id_producto']; ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Editar</button>
-                    <a href="delete_product.php?id=<?php echo $row['id_producto']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de querer eliminar este producto?');" >Eliminar</a>
-                </td>
-            </tr>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['nombre_px']); ?></td>
+                    <td><?php echo htmlspecialchars($row['precio']); ?></td>
+                    <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
+                    <td><?php echo $row['stock'] != 0 ? htmlspecialchars($row['stock']) : '-'; ?></td> <!-- Condición para 'stock' -->
+                    <td><?php echo $row['kilogramos'] != 0 ? htmlspecialchars($row['kilogramos']) : '-'; ?></td> <!-- Condición para 'kilogramos' -->
+                    <td>
+                        <!-- Botones de acción -->
+                    </td>
+                </tr>
 
             <!-- Modal de Edición -->
             <div class="modal fade" id="editModal<?php echo $row['id_producto']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel<?php echo $row['id_producto']; ?>" aria-hidden="true">
