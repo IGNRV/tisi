@@ -73,16 +73,17 @@ if (isset($_SESSION['id'])) {
         </thead>
         <tbody>
             <?php while ($row = $result->fetch_assoc()) { ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['nombre_px']); ?></td>
-                    <td><?php echo htmlspecialchars($row['precio']); ?></td>
-                    <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
-                    <td><?php echo $row['stock'] != 0 ? htmlspecialchars($row['stock']) : '-'; ?></td> <!-- Condición para 'stock' -->
-                    <td><?php echo $row['kilogramos'] != 0 ? htmlspecialchars($row['kilogramos']) : '-'; ?></td> <!-- Condición para 'kilogramos' -->
-                    <td>
-                        <!-- Botones de acción -->
-                    </td>
-                </tr>
+            <tr>
+                <td><?php echo htmlspecialchars($row['nombre_px']); ?></td>
+                <td><?php echo htmlspecialchars($row['precio']); ?></td>
+                <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
+                <td><?php echo $row['stock'] != 0 ? htmlspecialchars($row['stock']) : '-'; ?></td> <!-- Condición para 'stock' -->
+                <td><?php echo $row['kilogramos'] != 0 ? htmlspecialchars($row['kilogramos']) : '-'; ?></td> <!-- Condición para 'kilogramos' -->
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal<?php echo $row['id_producto']; ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Editar</button>
+                    <a href="delete_product.php?id=<?php echo $row['id_producto']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de querer eliminar este producto?');" >Eliminar</a>
+                </td>
+            </tr>
 
             <!-- Modal de Edición -->
             <div class="modal fade" id="editModal<?php echo $row['id_producto']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel<?php echo $row['id_producto']; ?>" aria-hidden="true">
@@ -116,11 +117,11 @@ if (isset($_SESSION['id'])) {
                                 </div>
                                 <div class="form-group">
                                     <label>Kilogramos</label>
-                                    <input type="text" name="kilogramos" class="form-control" value="<?php echo htmlspecialchars($row['kilogramos']); ?>">
+                                    <input type="text" name="kilogramos" class="form-control" value="<?php echo htmlspecialchars($row['kilogramos']); ?>" <?php echo $row['stock'] != 0 ? 'disabled' : ''; ?>>
                                 </div>
                                 <div class="form-group">
                                     <label>Stock</label>
-                                    <input type="text" name="stock" class="form-control" value="<?php echo htmlspecialchars($row['stock']); ?>">
+                                    <input type="text" name="stock" class="form-control" value="<?php echo htmlspecialchars($row['stock']); ?>" <?php echo $row['kilogramos'] != 0 ? 'disabled' : ''; ?>>
                                 </div>
                                 <input type="hidden" name="id_producto" value="<?php echo $row['id_producto']; ?>">
                             </div>
