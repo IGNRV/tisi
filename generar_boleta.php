@@ -50,10 +50,9 @@ $pdf->Ln(10);
 $pdf->SetFont('Arial', 'B', 12);
 
 // Encabezados de las columnas
-$pdf->Cell(40, 10, 'Nombre', 1);
+$pdf->Cell(80, 10, 'Nombre', 1);
 $pdf->Cell(40, 10, 'Precio Unitario', 1);
 $pdf->Cell(40, 10, 'Cantidad', 1);
-$pdf->Cell(40, 10, 'Total', 1);
 $pdf->Ln();
 
 // Restablecer la fuente para el contenido
@@ -63,19 +62,17 @@ $pdf->SetFont('Arial', '', 12);
 foreach ($productosVendidos as $producto) {
     $precio = (float)$producto['precio'];
     $cantidad = (int)$producto['cantidadVendida'];
-    $totalProducto = $precio * $cantidad;
 
-    $pdf->Cell(40, 10, $producto['nombre']);
+    $pdf->Cell(80, 10, $producto['nombre']);
     $pdf->Cell(40, 10, '$' . number_format($precio, 0, '.', ''));
     $pdf->Cell(40, 10, $cantidad);
-    $pdf->Cell(40, 10, '$' . number_format($totalProducto, 0, '.', ''));
     $pdf->Ln();
 }
 
-
 // Mostrar total, medio de pago y diferencia
 $pdf->Ln(10);
-$pdf->Cell(40, 10, "Total: $" . number_format($total, 2, '.', ''));
+$pdf->Cell(40, 10, "Total: $" . number_format($total, 2, '.',
+''));
 $pdf->Ln();
 
 // Calcular y mostrar IVA (19% del total)

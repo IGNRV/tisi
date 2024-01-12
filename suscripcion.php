@@ -6,7 +6,7 @@ require_once '/var/www/html/tisi/PHP-API-CLIENT/lib/FlowApi.class.php';
 
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    echo "Por favor, inicia sesión para verificar el estado de tu suscripción.";
+    echo "<p class='alert alert-warning'>Por favor, inicia sesión para verificar el estado de tu suscripción.</p>";
     exit;
 }
 
@@ -23,8 +23,12 @@ if ($stmt = $conn->prepare($query)) {
         $stmt->bind_result($estado_suscripcion, $userEmail, $suscripcionesPagadas);
         $stmt->fetch();
 
-        echo $estado_suscripcion == 1 ? "Suscripción activa." : "Suscripción no activa.";
-        echo "<br>Suscripciones pagadas: " . ($suscripcionesPagadas ?? 0);
+        echo "<div class='container'>";
+        echo "<div class='card mt-5'>";
+        echo "<div class='card-body'>";
+        echo "<h3 class='card-title'>Estado de Suscripción</h3>";
+        echo "<p class='card-text'>" . ($estado_suscripcion == 1 ? "Suscripción activa." : "Suscripción no activa.") . "</p>";
+        echo "<p class='card-text'>Suscripciones pagadas: " . ($suscripcionesPagadas ?? 0) . "</p>";
 
         // Prepara el arreglo de datos
         $commerceOrder = rand(1100, 2000);
@@ -32,7 +36,7 @@ if ($stmt = $conn->prepare($query)) {
             "commerceOrder" => $commerceOrder,
             "subject" => "Pago de suscripción",
             "currency" => "CLP",
-            "amount" => 5000,
+            "amount" => 20000,
             "email" => $userEmail,
             "paymentMethod" => 9,
             "urlConfirmation" => Config::get("BASEURL") . "/confirm.php",
@@ -61,13 +65,33 @@ if ($stmt = $conn->prepare($query)) {
         } catch (Exception $e) {
             echo "Error: " . $e->getCode() . " - " . $e->getMessage();
         }
+        echo "</div>"; // Cierre card-body
+        echo "</div>"; // Cierre card
+        echo "</div>"; // Cierre container
     } else {
-        echo "No se encontró el usuario.";
+        echo "<p class='alert alert-danger'>No se encontró el usuario.</p>";
     }
     $stmt->close();
 } else {
-    echo "Error al preparar la consulta: " . $conn->error;
+    echo "<p class='alert alert-danger'>Error al preparar la consulta: " . $conn->error . "</p>";
 }
 
 $conn->close();
 ?>
+
+<!-- Incluir CSS de Bootstrap -->
+<link href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet'>
+
+<!-- Estilos personalizados -->
+<style>
+    .container {
+        max-width: 600px;
+        margin-top: 50px;
+    }
+    .card-title {
+        color: #333;
+    }
+    .card-text {
+        color: #555;
+    }
+</style>
