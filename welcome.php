@@ -152,60 +152,70 @@ document.addEventListener('DOMContentLoaded', function() {
     var tablaSeleccionados = document.getElementById('tabla-seleccionados').querySelector('tbody');
     var productosSeleccionados = {}; // Objeto para rastrear los productos seleccionados
 
-    inputBusqueda.addEventListener('input', function() {
-        var buscarTexto = inputBusqueda.value.trim();
-        if (buscarTexto.length > 2) {
-            fetch('buscar_productos.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: 'buscar=' + encodeURIComponent(buscarTexto)
-            })
-            .then(response => response.json())
-            .then(data => {
-                resultadosDiv.innerHTML = '';
-                data.forEach(function(producto) {
-                    if (!productosSeleccionados[producto.nombre]) { // Verifica si el producto no ha sido seleccionado
-                        var li = document.createElement('li');
-                        li.textContent = producto.nombre + " - $" + producto.precio + " - Stock: " + producto.stock + " - Categoría: " + producto.categoria;
-                        li.addEventListener('click', function() {
-                            agregarProductoSeleccionado(producto);
-                        });
-                        li.style.fontSize = '15px'; // Aplicar el font-size 15px
-                        resultadosDiv.appendChild(li);
-                    }
-                });
-            })
-            .catch(error => console.error('Error:', error));
-        } else {
+    // ...
+
+inputBusqueda.addEventListener('input', function() {
+    var buscarTexto = inputBusqueda.value.trim();
+    if (buscarTexto.length > 2) {
+        fetch('buscar_productos.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'buscar=' + encodeURIComponent(buscarTexto)
+        })
+        .then(response => response.json())
+        .then(data => {
             resultadosDiv.innerHTML = '';
-        }
-    });
-    function calcularTotal() {
+            data.forEach(function(producto) {
+                if (!productosSeleccionados[producto.nombre]) {
+                    var li = document.createElement('li');
+                    // Modificación aquí para mostrar stock o kilogramos
+                    var cantidadTexto = (producto.stock != 0) ? " - Stock: " + producto.stock : " - Kilogramos: " + producto.kilogramos;
+                    li.textContent = producto.nombre + " - $" + producto.precio + cantidadTexto + " - Categoría: " + producto.categoria;
+                    li.addEventListener('click', function() {
+                        agregarProductoSeleccionado(producto);
+                    });
+                    li.style.fontSize = '15px';
+                    resultadosDiv.appendChild(li);
+                }
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        resultadosDiv.innerHTML = '';
+    }
+});
+
+// ...
+
+    // ...
+
+function calcularTotal() {
     var filas = tablaSeleccionados.rows;
     var total = 0;
 
     for (var i = 0; i < filas.length; i++) {
-        var precio = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
+        var precioPorUnidad = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
         var cantidad = parseInt(filas[i].cells[2].textContent);
-        total += precio * cantidad;
+        var esKilogramo = filas[i].cells[2].textContent.includes('gramos'); // Verifica si la unidad es en gramos
+
+        if (esKilogramo) {
+            cantidad /= 1000; // Convierte la cantidad a kilogramos para calcular el precio
+        }
+
+        total += precioPorUnidad * cantidad;
     }
 
     var iva = total * 0.19; // Calcula el 19% de IVA del total
     var totalConIva = total + iva; // Suma el IVA al total
 
     // Muestra el total, el IVA y el total con IVA
-    document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed(0);
-    document.getElementById('iva').textContent = 'IVA (19%): $' + iva.toFixed(0);
-    document.getElementById('totalConIva').textContent = 'Total con IVA: $' + totalConIva.toFixed(0);
-
-        // Actualizar el monto a pagar si el checkbox está marcado
-        if (document.getElementById('usarTotal').checked) {
-            document.getElementById('montopagar').value = totalConIva.toFixed(0);
-    }
-
-    // Calcular y mostrar la diferencia
-    actualizarDiferencia();
+    document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed(2);
+    document.getElementById('iva').textContent = 'IVA (19%): $' + iva.toFixed(2);
+    document.getElementById('totalConIva').textContent = 'Total con IVA: $' + totalConIva.toFixed(2);
 }
+
+// ...
+
 
 function actualizarDiferencia() {
     var totalConIva = parseFloat(document.getElementById('totalConIva').textContent.replace('Total con IVA: $', ''));
@@ -229,65 +239,87 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
 
 
     function agregarProductoSeleccionado(producto) {
-        if (productosSeleccionados[producto.nombre]) return; // Evita agregar el producto si ya está seleccionado
+    if (productosSeleccionados[producto.nombre]) return; // Evita agregar el producto si ya está seleccionado
 
-        var fila = tablaSeleccionados.insertRow();
-        fila.insertCell().textContent = producto.nombre;
-        fila.insertCell().textContent = "$" + producto.precio;
-        var celdaCantidad = fila.insertCell();
-        celdaCantidad.textContent = '1'; // Cantidad inicial
-        fila.insertCell().textContent = producto.categoria;
-        
-        var btnEditar = document.createElement('button');
-        btnEditar.textContent = 'Editar Cantidad';
-        btnEditar.className = 'btn btn-primary';
-        btnEditar.style.fontSize = '12px'; // Reducir tamaño de letra del botón
-        btnEditar.dataset.producto = JSON.stringify(producto); // Almacenar el producto en el botón
-        btnEditar.onclick = function() {
-            editarCantidad(this);
-        };
-        fila.insertCell().appendChild(btnEditar);
+    var fila = tablaSeleccionados.insertRow();
+    fila.insertCell().textContent = producto.nombre;
+    fila.insertCell().textContent = "$" + producto.precio;
+    var celdaCantidad = fila.insertCell();
 
-        productosSeleccionados[producto.nombre] = true; // Marca el producto como seleccionado
-        calcularTotal();
+    // Modifica aquí para agregar 'gramos' al texto
+    celdaCantidad.textContent = producto.stock != 0 ? '1' : '1000 gramos'; // Agrega 'gramos' para claridad
+    fila.insertCell().textContent = producto.categoria;
 
-    }
+    var btnEditar = document.createElement('button');
+    btnEditar.textContent = 'Editar Cantidad';
+    btnEditar.className = 'btn btn-primary';
+    btnEditar.style.fontSize = '12px'; // Reducir tamaño de letra del botón
+    btnEditar.dataset.producto = JSON.stringify(producto); // Almacenar el producto en el botón
+    btnEditar.onclick = function() {
+        editarCantidad(this);
+    };
+    fila.insertCell().appendChild(btnEditar);
+
+    productosSeleccionados[producto.nombre] = true; // Marca el producto como seleccionado
+    calcularTotal();
+}
+
+
 
     function editarCantidad(btn) {
-        var producto = JSON.parse(btn.dataset.producto);
-        var inputCantidad = document.getElementById('inputCantidad');
-        
-        inputCantidad.value = producto.cantidad || '1';
-        inputCantidad.max = producto.stock; // Establecer el máximo según el stock
+    var producto = JSON.parse(btn.dataset.producto);
+    var inputCantidad = document.getElementById('inputCantidad');
+    
+    var modalTitulo = document.getElementById('modalCantidadLabel');
 
-        document.getElementById('productoSeleccionadoId').value = btn.dataset.producto;
-        $('#modalCantidad').modal('show');
+    // Determinar si se está editando stock o kilogramos y ajustar el título del modal y el valor máximo
+    if (producto.stock != 0) {
+        modalTitulo.textContent = "Modificar Cantidad (Stock)";
+        inputCantidad.max = producto.stock; // Establecer el máximo según el stock
+    } else {
+        modalTitulo.textContent = "Modificar Cantidad (Kilogramos en Gramos)";
+        inputCantidad.max = producto.kilogramos * 1000; // Convertir kilogramos a gramos
     }
 
-    window.actualizarCantidad = function() {
-        var cantidad = document.getElementById('inputCantidad').value;
-        var producto = JSON.parse(document.getElementById('productoSeleccionadoId').value);
-        
-        // Verificar que la cantidad no exceda el stock
-        if (cantidad > producto.stock) {
-            alert("La cantidad no puede exceder el stock disponible.");
+    inputCantidad.value = producto.cantidad || '1';
+
+    document.getElementById('productoSeleccionadoId').value = btn.dataset.producto;
+    $('#modalCantidad').modal('show');
+}
+
+window.actualizarCantidad = function() {
+    var cantidad = document.getElementById('inputCantidad').value;
+    var producto = JSON.parse(document.getElementById('productoSeleccionadoId').value);
+
+    // Convertir la cantidad a kilogramos si se editan kilogramos y verificar que no exceda el máximo
+    if (producto.stock == 0) {
+        cantidad = cantidad / 1000; // Convertir gramos a kilogramos
+        if (cantidad > producto.kilogramos) {
+            alert("La cantidad seleccionada excede los kilogramos disponibles.");
             return;
         }
-
-        producto.cantidad = cantidad;
-        
-        var filas = tablaSeleccionados.rows;
-        for (var i = 0; i < filas.length; i++) {
-            var btn = filas[i].cells[4].firstChild;
-            if (btn.dataset.producto === document.getElementById('productoSeleccionadoId').value) {
-                filas[i].cells[2].textContent = cantidad; // Actualizar cantidad
-                break;
-            }
+    } else {
+        // Verificar que la cantidad no exceda el stock
+        if (cantidad > producto.stock) {
+            alert("La cantidad seleccionada excede el stock disponible.");
+            return;
         }
-        $('#modalCantidad').modal('hide');
-        calcularTotal();
+    }
 
-    };
+    producto.cantidad = cantidad;
+
+    var filas = tablaSeleccionados.rows;
+    for (var i = 0; i < filas.length; i++) {
+        var btn = filas[i].cells[4].firstChild;
+        if (btn.dataset.producto === document.getElementById('productoSeleccionadoId').value) {
+            // Actualizar la cantidad en la tabla, convertir a gramos si es necesario
+            filas[i].cells[2].textContent = producto.stock != 0 ? cantidad : (cantidad * 1000).toFixed(0) + ' gramos';
+            break;
+        }
+    }
+    $('#modalCantidad').modal('hide');
+    calcularTotal();
+};
 });
 
 document.getElementById('registrarPago').addEventListener('click', function() {

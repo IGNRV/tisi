@@ -19,8 +19,8 @@ if (isset($_SESSION['id'])) {
 if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     $buscar = $_POST['buscar'];
 
-    // Preparar consulta para buscar productos con detalles adicionales
-    $query = "SELECT p.nombre_px, p.precio, p.stock, c.nombre_categoria 
+    // Modifica esta consulta para incluir la columna 'kilogramos'
+    $query = "SELECT p.nombre_px, p.precio, p.stock, p.kilogramos, c.nombre_categoria 
               FROM productos p 
               INNER JOIN categorias c ON p.id_categoria = c.id_categoria 
               WHERE p.id_usuario = ? AND p.nombre_px LIKE CONCAT('%', ?, '%')";
@@ -35,6 +35,7 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
                 'nombre' => $row['nombre_px'],
                 'precio' => $row['precio'],
                 'stock' => $row['stock'],
+                'kilogramos' => $row['kilogramos'], // Agrega esta línea
                 'categoria' => $row['nombre_categoria']
             ];
         }
@@ -45,7 +46,6 @@ if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     }
     exit;
 }
-
 $query_medios_pago = "SELECT id_medios_de_pago, nombre_medio_pago FROM medios_de_pago";
 $medios_pago = [];
 if ($stmt = $conn->prepare($query_medios_pago)) {

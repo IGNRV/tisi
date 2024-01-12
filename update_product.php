@@ -1,5 +1,8 @@
 <?php
 // update_product.php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require_once 'db.php';
 
@@ -8,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre_px = $_POST['nombre_px'];
     $precio = $_POST['precio'];
     $id_categoria = $_POST['id_categoria'];
-    $stock = $_POST['stock'];
-    $kilogramos = $_POST['kilogramos']; // Nuevo campo
+    $stock = isset($_POST['stock']) ? $_POST['stock'] : 0; // Asigna 0 si no se proporciona stock
+    $kilogramos = isset($_POST['kilogramos']) ? $_POST['kilogramos'] : null; // Permite valores nulos para kilogramos
 
     $query = "UPDATE productos SET nombre_px = ?, precio = ?, id_categoria = ?, stock = ?, kilogramos = ? WHERE id_producto = ?";
 
