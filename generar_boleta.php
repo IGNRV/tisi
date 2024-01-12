@@ -1,7 +1,9 @@
 <?php
 require_once 'fpdf/fpdf.php'; // Asegúrate de que este es el camino correcto a FPDF
 require_once 'db.php'; // Asume que db.php contiene la conexión a la base de datos
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
@@ -11,8 +13,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
 // Recoger los datos pasados desde registrar_pago.php
 $medioPago = urldecode($_GET['medioPago']); // Asegúrate de decodificar el valor
-$total = $_GET['total'];
-$diferencia = $_GET['diferencia'];
+$total = isset($_GET['total']) ? floatval($_GET['total']) : 0;
+$diferencia = isset($_GET['diferencia']) ? floatval($_GET['diferencia']) : 0;
 $productosVendidos = json_decode($_GET['productosVendidos'], true);
 
 // Obtener los datos de la empresa
@@ -73,22 +75,22 @@ foreach ($productosVendidos as $producto) {
 
 // Mostrar total, medio de pago y diferencia
 $pdf->Ln(10);
-$pdf->Cell(40, 10, "Total: $" . number_format($total, 0, '.', ''));
+$pdf->Cell(40, 10, "Total: $" . number_format($total, 2, '.', ''));
 $pdf->Ln();
 
 // Calcular y mostrar IVA (19% del total)
 $iva = $total * 0.19;
-$pdf->Cell(40, 10, "IVA (19%): $" . number_format($iva, 0, '.', ''));
+$pdf->Cell(40, 10, "IVA (19%): $" . number_format($iva, 2, '.', ''));
 $pdf->Ln();
 
 // Sumar el IVA al total y mostrar total con IVA
 $totalConIVA = $total + $iva;
-$pdf->Cell(40, 10, "Total con IVA: $" . number_format($totalConIVA, 0, '.', ''));
+$pdf->Cell(40, 10, "Total con IVA: $" . number_format($totalConIVA, 2, '.', ''));
 $pdf->Ln();
 
 $pdf->Cell(40, 10, "Medio de Pago: " . $medioPago);
 $pdf->Ln();
-$pdf->Cell(40, 10, "Diferencia: $" . number_format($diferencia, 0, '.', ''));
+$pdf->Cell(40, 10, "Diferencia: $" . number_format($diferencia, 2, '.', ''));
 
 // Enviar encabezados para forzar la descarga del PDF
 header('Content-Type: application/pdf');

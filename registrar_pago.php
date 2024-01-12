@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once 'db.php';
 session_start();
 
@@ -14,34 +18,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $query = "INSERT INTO detalles_transaccion (medio_de_pago, total, iva, total_con_iva, diferencia, monto_pagado_cliente, id_usuario, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
-        $diferencia = $montoPagadoCliente - $totalConIva; // Calcular la diferencia
-        // Asegúrate de pasar $iva y $totalConIva a la consulta
+        $diferencia = $montoPagadoCliente - $totalConIva;
         $stmt->bind_param("iidddsss", $medioPago, $total, $iva, $totalConIva, $diferencia, $montoPagadoCliente, $idUsuario, $fechaActual);
         $stmt->execute();
 
         $productosVendidos = json_decode($_POST['productosVendidos'], true);
         foreach ($productosVendidos as &$producto) {
-            $queryPrecio = "SELECT precio FROM productos WHERE nombre_px = ?";
-            if ($stmtPrecio = $conn->prepare($queryPrecio)) {
-                $stmtPrecio->bind_param("s", $producto['nombre']);
-                $stmtPrecio->execute();
-                $resultadoPrecio = $stmtPrecio->get_result();
-                if ($filaPrecio = $resultadoPrecio->fetch_assoc()) {
-                    $producto['precio'] = $filaPrecio['precio'];
-                } else {
-                    $producto['precio'] = 0; // o manejarlo de otra manera si el producto no tiene precio
+            $queryStockKg = "SELECT stock, kilogramos FROM productos WHERE nombre_px = ?";
+            if ($stmtStockKg = $conn->prepare($queryStockKg)) {
+                $stmtStockKg->bind_param("s", $producto['nombre']);
+                $stmtStockKg->execute();
+                $resultadoStockKg = $stmtStockKg->get_result();
+                if ($filaStockKg = $resultadoStockKg->fetch_assoc()) {
+                    if ($filaStockKg['stock'] != 0) {
+                        $queryUpdateStock = "UPDATE productos SET stock = stock - ? WHERE nombre_px = ?";
+                        if ($stmtUpdate = $conn->prepare($queryUpdateStock)) {
+                            $stmtUpdate->bind_param("is", $producto['cantidadVendida'], $producto['nombre']);
+                            $stmtUpdate->execute();
+                            $stmtUpdate->close();
+                        }
+                    } elseif ($filaStockKg['kilogramos'] != null) {
+                        $cantidadEnKg = $producto['cantidadVendida'] / 1000; // Convierte de gramos a kilogramos
+                        $queryUpdateKg = "UPDATE productos SET kilogramos = kilogramos - ? WHERE nombre_px = ?";
+                        if ($stmtUpdateKg = $conn->prepare($queryUpdateKg)) {
+                            $stmtUpdateKg->bind_param("ds", $cantidadEnKg, $producto['nombre']);
+                            $stmtUpdateKg->execute();
+                            $stmtUpdateKg->close();
+                        }
+                    }
                 }
-                $stmtPrecio->close();
-            }
-
-            $queryUpdateStock = "UPDATE productos SET stock = stock - ? WHERE nombre_px = ?";
-            if ($stmtUpdate = $conn->prepare($queryUpdateStock)) {
-                $stmtUpdate->bind_param("is", $producto['cantidadVendida'], $producto['nombre']);
-                $stmtUpdate->execute();
-                $stmtUpdate->close();
+                $stmtStockKg->close();
             }
         }
-        unset($producto); // Rompe la referencia con el último elemento
+        unset($producto);
 
         $productosVendidosEncoded = urlencode(json_encode($productosVendidos));
         header("Location: generar_boleta.php?medioPago=$medioPago&total=$total&diferencia=$diferencia&productosVendidos=$productosVendidosEncoded");
