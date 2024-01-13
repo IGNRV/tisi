@@ -245,12 +245,16 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
     var fila = tablaSeleccionados.insertRow();
     fila.insertCell().textContent = producto.nombre;
     fila.insertCell().textContent = "$" + producto.precio;
+
     var celdaCantidad = fila.insertCell();
-
-    // Modifica aquí para agregar 'gramos' al texto
     celdaCantidad.textContent = producto.stock != 0 ? '1' : '1000 gramos'; // Agrega 'gramos' para claridad
-    fila.insertCell().textContent = producto.categoria;
 
+    // Calcula y muestra el total del producto
+    var totalProducto = (producto.stock != 0 ? 1 : 1000 / 1000) * producto.precio; // Aquí asumes que 1000 gramos = 1 unidad
+    var celdaTotal = fila.insertCell();
+    celdaTotal.textContent = "$" + totalProducto.toFixed(2);
+
+    fila.insertCell().textContent = producto.categoria;
     var btnEditar = document.createElement('button');
     btnEditar.textContent = 'Editar Cantidad';
     btnEditar.className = 'btn btn-primary';
@@ -289,8 +293,8 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
 }
 
 window.actualizarCantidad = function() {
-    var cantidad = document.getElementById('inputCantidad').value;
     var producto = JSON.parse(document.getElementById('productoSeleccionadoId').value);
+    var cantidad = document.getElementById('inputCantidad').value;
 
     // Convertir la cantidad a kilogramos si se editan kilogramos y verificar que no exceda el máximo
     if (producto.stock == 0) {
@@ -309,12 +313,14 @@ window.actualizarCantidad = function() {
 
     producto.cantidad = cantidad;
 
+    // Actualizar la fila correspondiente en la tabla
     var filas = tablaSeleccionados.rows;
     for (var i = 0; i < filas.length; i++) {
-        var btn = filas[i].cells[4].firstChild;
-        if (btn.dataset.producto === document.getElementById('productoSeleccionadoId').value) {
-            // Actualizar la cantidad en la tabla, convertir a gramos si es necesario
+        var btn = filas[i].cells[5].firstChild; // Ajuste del índice si se añadió una columna
+        if (JSON.parse(btn.dataset.producto).nombre === producto.nombre) {
             filas[i].cells[2].textContent = producto.stock != 0 ? cantidad : (cantidad * 1000).toFixed(0) + ' gramos';
+            var totalProducto = (producto.stock != 0 ? cantidad : cantidad / 1000) * producto.precio;
+            filas[i].cells[3].textContent = "$" + totalProducto.toFixed(2);
             break;
         }
     }

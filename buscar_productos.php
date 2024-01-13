@@ -77,15 +77,16 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 </form>
 
 <table class="table table-striped" id="tabla-seleccionados">
-    <thead class="thead-dark" style="font-size: 15px;">
-        <tr>
-            <th>PX</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Categoría</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
+<thead class="thead-dark" style="font-size: 15px;">
+    <tr>
+        <th>PX</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Total</th> <!-- Nueva columna para Total -->
+        <th>Categoría</th>
+        <th>Acciones</th>
+    </tr>
+</thead>
     <tbody style="font-size: 15px;">
     </tbody>
 </table>
