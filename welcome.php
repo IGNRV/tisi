@@ -240,6 +240,7 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
 
     function agregarProductoSeleccionado(producto) {
     if (productosSeleccionados[producto.nombre]) return; // Evita agregar el producto si ya está seleccionado
+    
 
     var fila = tablaSeleccionados.insertRow();
     fila.insertCell().textContent = producto.nombre;
