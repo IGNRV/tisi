@@ -352,14 +352,17 @@ document.getElementById('registrarPago').addEventListener('click', function() {
 
     // Crear un array con la información de los productos vendidos
     var productosVendidos = [];
-    var filas = document.getElementById('tabla-seleccionados').querySelector('tbody').rows;
-    for (var i = 0; i < filas.length; i++) {
-        productosVendidos.push({
-            nombre: filas[i].cells[0].textContent,
-            precio: filas[i].cells[1].textContent.replace('$', ''),
-            cantidadVendida: parseInt(filas[i].cells[2].textContent)
-        });
-    }
+var filas = document.getElementById('tabla-seleccionados').querySelector('tbody').rows;
+for (var i = 0; i < filas.length; i++) {
+    // Asegúrate de recoger el total desde la columna correcta, que puede ser la cuarta celda (índice 3) si has añadido una nueva columna para el total
+    var totalPorProducto = parseFloat(filas[i].cells[3].textContent.replace('$', ''));
+    productosVendidos.push({
+        nombre: filas[i].cells[0].textContent,
+        precio: filas[i].cells[1].textContent.replace('$', ''),
+        cantidadVendida: filas[i].cells[2].textContent, // Guarda la cantidad con la unidad (ej. '1000 gramos' o '1')
+        total: totalPorProducto
+    });
+}
 
     // Agregar productosVendidos al cuerpo de la solicitud
     var formData = new FormData();
