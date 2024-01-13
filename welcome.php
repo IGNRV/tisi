@@ -209,9 +209,9 @@ function calcularTotal() {
     var totalConIva = total + iva; // Suma el IVA al total
 
     // Muestra el total, el IVA y el total con IVA
-    document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed(2);
-    document.getElementById('iva').textContent = 'IVA (19%): $' + iva.toFixed(2);
-    document.getElementById('totalConIva').textContent = 'Total con IVA: $' + totalConIva.toFixed(2);
+    document.getElementById('totalPrecio').textContent = 'Total: $' + total.toFixed(0);
+    document.getElementById('iva').textContent = 'IVA (19%): $' + iva.toFixed(0);
+    document.getElementById('totalConIva').textContent = 'Total con IVA: $' + totalConIva.toFixed(0);
 }
 
 // ...
@@ -252,7 +252,7 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
     // Calcula y muestra el total del producto
     var totalProducto = (producto.stock != 0 ? 1 : 1000 / 1000) * producto.precio; // Aquí asumes que 1000 gramos = 1 unidad
     var celdaTotal = fila.insertCell();
-    celdaTotal.textContent = "$" + totalProducto.toFixed(2);
+    celdaTotal.textContent = "$" + totalProducto.toFixed(0);
 
     fila.insertCell().textContent = producto.categoria;
     var btnEditar = document.createElement('button');
@@ -293,39 +293,44 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
 }
 
 window.actualizarCantidad = function() {
+    var inputCantidad = document.getElementById('inputCantidad').value;
     var producto = JSON.parse(document.getElementById('productoSeleccionadoId').value);
-    var cantidad = document.getElementById('inputCantidad').value;
 
     // Convertir la cantidad a kilogramos si se editan kilogramos y verificar que no exceda el máximo
     if (producto.stock == 0) {
-        cantidad = cantidad / 1000; // Convertir gramos a kilogramos
-        if (cantidad > producto.kilogramos) {
+        if (inputCantidad > producto.kilogramos * 1000) {
             alert("La cantidad seleccionada excede los kilogramos disponibles.");
             return;
-        }
+    }
     } else {
-        // Verificar que la cantidad no exceda el stock
-        if (cantidad > producto.stock) {
-            alert("La cantidad seleccionada excede el stock disponible.");
-            return;
-        }
+    if (inputCantidad > producto.stock) {
+    alert("La cantidad seleccionada excede el stock disponible.");
+    return;
     }
+    }        
+    var totalProducto;
+if (producto.stock != 0) {
+    // Si se vende por stock, la cantidad ya está en unidades por lo que se multiplica directamente
+    totalProducto = inputCantidad * producto.precio;
+} else {
+    // Si se vende por kilogramos, convertir gramos a kilogramos para calcular el total
+    var precioPorGramo = producto.precio / 1000;
+    totalProducto = inputCantidad * precioPorGramo;
+}
 
-    producto.cantidad = cantidad;
-
-    // Actualizar la fila correspondiente en la tabla
-    var filas = tablaSeleccionados.rows;
-    for (var i = 0; i < filas.length; i++) {
-        var btn = filas[i].cells[5].firstChild; // Ajuste del índice si se añadió una columna
-        if (JSON.parse(btn.dataset.producto).nombre === producto.nombre) {
-            filas[i].cells[2].textContent = producto.stock != 0 ? cantidad : (cantidad * 1000).toFixed(0) + ' gramos';
-            var totalProducto = (producto.stock != 0 ? cantidad : cantidad / 1000) * producto.precio;
-            filas[i].cells[3].textContent = "$" + totalProducto.toFixed(2);
-            break;
-        }
+// Actualizar la fila correspondiente en la tabla
+var filas = tablaSeleccionados.rows;
+for (var i = 0; i < filas.length; i++) {
+    var btn = filas[i].cells[5].firstChild; // Ajuste del índice para la nueva columna
+    if (JSON.parse(btn.dataset.producto).nombre === producto.nombre) {
+        filas[i].cells[2].textContent = producto.stock != 0 ? inputCantidad : inputCantidad + ' gramos';
+        filas[i].cells[3].textContent = "$" + totalProducto.toFixed(0);
+        break;
     }
-    $('#modalCantidad').modal('hide');
-    calcularTotal();
+}
+
+$('#modalCantidad').modal('hide');
+calcularTotal();
 };
 });
 
