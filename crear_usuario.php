@@ -86,16 +86,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Crear Usuario</title>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Asegúrate de incluir esta etiqueta para la responsividad -->
 </head>
 <body>
 
-<div class="container">
-    <h2>Crear Usuario</h2>
-    <?php if (isset($_SESSION['error_message'])): ?>
-        <div class='alert alert-danger'><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?></div>
-    <?php endif; ?>
-    <form action="crear_usuario.php" method="post">
-        <div class="form-group">
+<div class="container mt-5"> <!-- mt-5 añade un poco de espacio en la parte superior -->
+    <div class="row">
+        <div class="col-md-8 col-lg-6 mx-auto"> <!-- Centrar el formulario y hacerlo más estrecho en pantallas grandes -->
+            <h2 class="mb-4 text-center">Crear Usuario</h2>
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class='alert alert-danger'><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?></div>
+            <?php endif; ?>
+            <form action="crear_usuario.php" method="post">
+                <div class="form-group">
             <label>Usuario:</label>
             <input type="text" name="usuario" class="form-control" required>
         </div>
@@ -126,9 +129,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="form-group">
             <label>Confirmar Contraseña:</label>
             <input type="password" name="confirm_pass" class="form-control" required>
+            </div>
+                <button type="submit" class="btn btn-primary btn-block">Crear Usuario</button> <!-- btn-block hace que el botón se extienda al ancho completo en pantallas pequeñas -->
+            </form>
         </div>
-        <button type="submit" class="btn btn-primary">Crear Usuario</button>
-    </form>
+    </div>
 </div>
 
 <!-- Incluir JS de Bootstrap -->
