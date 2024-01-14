@@ -41,33 +41,92 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
 // Pasar el mapa de medios de pago a JavaScript
 echo "<script>var mediosPagoMap = " . json_encode($medios_pago_map) . ";</script>";
 ?>
-
 <!-- Formulario para la cuadratura de caja -->
-<form id="formCuadratura" onsubmit="buscarCuadratura(event)">
-    <div class="form-group">
-        <label for="fecha">Fecha</label>
-        <input type="date" name="fecha" class="form-control" id="fecha" required <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Cuadratura de Caja</h5>
+                    <form id="formCuadratura" onsubmit="buscarCuadratura(event)">
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" name="fecha" class="form-control" id="fecha" required <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+                        </div>
+                        <div class="form-group">
+                            <label for="medioPago">Medio de Pago</label>
+                            <select class="form-control" id="medioPago" name="medioPago" required <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+                                <?php foreach ($medios_pago as $medio): ?>
+                                    <option value="<?php echo htmlspecialchars($medio['id_medios_de_pago']); ?>">
+                                        <?php echo htmlspecialchars($medio['nombre_medio_pago']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Buscar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label for="medioPago">Medio de Pago</label>
-        <select class="form-control" id="medioPago" name="medioPago" required <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
-            <?php foreach ($medios_pago as $medio): ?>
-                <option value="<?php echo htmlspecialchars($medio['id_medios_de_pago']); ?>">
-                    <?php echo htmlspecialchars($medio['nombre_medio_pago']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+    <div class="row mt-4">
+        <div class="col-lg-8 mx-auto">
+            <button type="button" class="btn btn-secondary" id="generarPdf" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Generar PDF</button>
+</div>
+</div>
+<div class="row mt-3" id="resultadosSeccion" style="display: none;">
+    <div class="col-lg-8 mx-auto">
+        <!-- Resultados con estilo de tarjeta y desplazamiento horizontal para tablas en dispositivos pequeños -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Resultados</h5>
+                <div id="resultadosCuadratura" class="table-responsive"></div>
+            </div>
+        </div>
     </div>
+</div>
+</div>
+<style>
+    /* Estilos adicionales */
+    .card {
+        border-radius: 0.5rem;
+    }
 
-    <button type="submit" class="btn btn-primary" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Buscar</button>
-</form>
+    .card-title {
+        color: #333333;
+        font-weight: bold;
+    }
 
-<button type="button" class="btn btn-primary" id="generarPdf" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Generar PDF</button>
+    .btn-primary {
+        background-color: #4e73df;
+        border: none;
+    }
 
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
 
-<!-- Aquí es donde se mostrarán los resultados de la búsqueda -->
-<div id="resultadosCuadratura"></div>
+    .table {
+        margin-bottom: 0; /* Elimina el margen inferior de la tabla */
+    }
+
+    .table thead th {
+        background-color: #f8f9fc;
+        color: #4e73df;
+        border-bottom: 2px solid #e3e6f0;
+    }
+
+    .table tbody td {
+        color: #6e707e;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+</style>
+
 
 <script>
 let busquedasRealizadas = {};
@@ -94,6 +153,7 @@ function buscarCuadratura(event) {
     })
     .then(response => response.json())
     .then(response => {
+        document.getElementById('resultadosSeccion').style.display = 'block';
         const resultadosDiv = document.getElementById('resultadosCuadratura');
 
         // Crear y añadir un elemento para mostrar el nombre del medio de pago

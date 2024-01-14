@@ -60,7 +60,7 @@ if (isset($_SESSION['id'])) {
 </div>
 
 <div class="table-responsive">
-    <table class="table">
+    <table class="table" id="productsTable">
         <thead class="thead-dark">
             <tr>
                 <th>Producto</th>
@@ -216,6 +216,190 @@ if (isset($_SESSION['id'])) {
         </div>
     </div>
 </div>
+<style>
+    /* Estilos generales */
+    body {
+        color: #5a5c69;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .btn {
+        border-radius: 0.35rem;
+    }
+
+    /* Estilos para la tabla */
+    .table {
+        background-color: #fff;
+        border-collapse: collapse;
+    }
+
+    .table thead th {
+        background-color: #4e73df;
+        color: #fff;
+        border: none;
+    }
+
+    .table tbody td {
+        color: #6e707e;
+    }
+
+    .table tbody tr {
+        border-top: 1px solid #e3e6f0;
+    }
+
+    .table-responsive {
+        border: none;
+    }
+
+    /* Estilos para los botones */
+    .btn-primary {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    .btn-info {
+    background-color: #36b9cc;
+    border-color: #36b9cc;
+}
+
+.btn-success {
+    background-color: #1cc88a;
+    border-color: #1cc88a;
+}
+
+.btn-danger {
+    background-color: #e74a3b;
+    border-color: #e74a3b;
+}
+
+.btn-secondary {
+    background-color: #858796;
+    border-color: #858796;
+}
+
+/* Estilos para las tarjetas */
+.card {
+    border: none;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #4e73df;
+    color: #fff;
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Estilos para los formularios */
+.form-control {
+    border-radius: 0.35rem;
+    border: 1px solid #d1d3e2;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #5a5c69;
+}
+
+/* Estilos para los modales */
+.modal-content {
+    border-radius: 0.35rem;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.modal-body {
+    padding-top: 5px;
+}
+
+/* Estilos para los mensajes de alerta */
+.alert {
+    border-radius: 0.35rem;
+}
+
+/* Estilos para los enlaces */
+a {
+    color: #4e73df;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Estilos adicionales para el layout de la página */
+.container {
+    margin-top: 30px;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+/* Estilos para la paginación */
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #4e73df;
+}
+
+.pagination a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<script>
+// Paginación de la tabla de productos
+document.addEventListener('DOMContentLoaded', function() {
+    var tableBody = document.querySelector('#productsTable tbody');
+    var rowsPerPage = 10; // Cantidad de filas por página
+    var rows = tableBody.querySelectorAll('tr');
+    var pagesCount = Math.ceil(rows.length / rowsPerPage); // Calcula el número total de páginas
+
+    function displayPage(page) {
+        var start = (page - 1) * rowsPerPage;
+        var end = start + rowsPerPage;
+
+        // Ocultar todas las filas
+        rows.forEach(function(row) {
+            row.style.display = 'none';
+        });
+
+        // Mostrar las filas de la página actual
+        for (var i = start; i < end && i < rows.length; i++) {
+            rows[i].style.display = '';
+        }
+    }
+
+    // Crear paginación en el pie de la tabla
+    var pagination = document.createElement('div');
+    pagination.className = 'pagination';
+
+    for (var i = 1; i <= pagesCount; i++) {
+        var pageLink = document.createElement('a');
+        pageLink.innerText = i;
+        pageLink.href = '#';
+        pageLink.dataset.page = i;
+        pageLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            displayPage(this.dataset.page);
+        });
+
+        pagination.appendChild(pageLink);
+    }
+
+    // Añadir paginación después de la tabla
+    tableBody.closest('.table-responsive').after(pagination);
+
+    // Mostrar la primera página inicialmente
+    displayPage(1);
+});
+</script>
+
 
 <?php
     } else {

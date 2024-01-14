@@ -66,11 +66,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login</title>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <style>
-        /* Estilo adicional para centrar verticalmente el logo */
+        /* Estilo adicional para centrar verticalmente el formulario de inicio de sesión */
         .vertical-center {
-            min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
-            min-height: 100vh; /* These two lines are counted as one 🙂       */
+            min-height: 100vh; /* Altura de la ventana del navegador */
             display: flex;
             align-items: center;
         }
@@ -78,27 +78,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 <div class="container">
-<div class="row vertical-center">
-    <div class="col-md-6 offset-md-3 text-center">
-            <img src="https://trackitsellit.oralisisdataservice.cl/images/logo.png" alt="Logo" class="img-fluid mb-4" style="max-height: 150px;">
-
+    <div class="row vertical-center justify-content-center">
+        <div class="col-sm-8 col-md-6 col-lg-4">
+            <div class="text-center">
+                <img src="https://trackitsellit.oralisisdataservice.cl/images/logo.png" alt="Logo" class="img-fluid mb-4" style="max-height: 150px;">
+            </div>
 
             <!-- Formulario de inicio de sesión con estilos Bootstrap -->
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" class="mt-4">
                 <div class="form-group">
-                    <input placeholder="Ingresa tu correo electrónico" type="email" id="email" name="email" class="form-control inputLogin" required>
+                    <input placeholder="Ingresa tu correo electrónico" type="email" id="email" name="email" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <input placeholder="Ingresa tu contraseña" type="password" id="password" name="password" class="form-control inputLogin" required>
+                    <input placeholder="Ingresa tu contraseña" type="password" id="password" name="password" class="form-control" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
             </form>
             <div class="mt-3">
-    <a href="recuperar_contrasena.php" class="btn btn-warning">Recuperar Contraseña</a>
-</div>
-            <div class="mt-3">
-                <a href="https://trackitsellit.oralisisdataservice.cl/crear_usuario.php" class="btn btn-secondary">Crear Usuario</a>
-            </div>
+                <a href="recuperar_contrasena.php" class="btn btn-warning btn-block">Recuperar Contraseña</a>
+                </div>
+        <div class="mt-3">
+            <a href="https://trackitsellit.oralisisdataservice.cl/crear_usuario.php" class="btn btn-secondary btn-block">Crear Usuario</a>
         </div>
     </div>
 </div>
