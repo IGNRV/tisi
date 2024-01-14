@@ -26,7 +26,7 @@ if (isset($_SESSION['id']) && isset($_FILES['fileUpload'])) {
 
             // Preparar consulta SQL
             $stmt = $conn->prepare("INSERT INTO productos (nombre_px, precio, stock, kilogramos, id_categoria, id_usuario) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("siiiii", $nombre_px, $precio, $stock, $kilogramos, $categoria_etc_id, $id_usuario);
+            $stmt->bind_param("siidii", $nombre_px, $precio, $stock, $kilogramos, $categoria_etc_id, $id_usuario);
             $stmt->execute();
         }
 

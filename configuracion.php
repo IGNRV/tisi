@@ -22,12 +22,13 @@ if ($estadoSuscripcionStmt = $conn->prepare("SELECT estado_suscripcion FROM usua
 }
 
 // Intentar obtener los datos existentes de la empresa
-$query = "SELECT razon_social, rut, direccion, comuna FROM negocio WHERE id_usuario = ?";
+$query = "SELECT razon_social, rut, direccion, comuna, giro FROM negocio WHERE id_usuario = ?";
 $datosNegocio = [
     'razon_social' => '',
     'rut' => '',
     'direccion' => '',
-    'comuna' => ''
+    'comuna' => '',
+    'giro' => ''
 ];
 
 if ($stmt = $conn->prepare($query)) {
@@ -47,14 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $rut = $_POST['rut'] ?? '';
     $direccion = $_POST['direccion'] ?? '';
     $comuna = $_POST['comuna'] ?? '';
+    $giro = $_POST['giro'] ?? ''; // Nuevo campo para el giro
 
     // Verificar si ya existen datos y elegir la consulta adecuada
     $query = $result->num_rows > 0 ? 
-        "UPDATE negocio SET razon_social = ?, rut = ?, direccion = ?, comuna = ? WHERE id_usuario = ?" :
-        "INSERT INTO negocio (razon_social, rut, direccion, comuna, id_usuario) VALUES (?, ?, ?, ?, ?)";
+        "UPDATE negocio SET razon_social = ?, rut = ?, direccion = ?, comuna = ?, giro = ? WHERE id_usuario = ?" :
+        "INSERT INTO negocio (razon_social, rut, direccion, comuna, giro, id_usuario) VALUES (?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("ssssi", $razonSocial, $rut, $direccion, $comuna, $idUsuario);
+        $stmt->bind_param("sssssi", $razonSocial, $rut, $direccion, $comuna, $giro, $idUsuario);
         $stmt->execute();
         if ($stmt->affected_rows > 0) {
             $mensaje = "Datos guardados correctamente.";
@@ -63,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'razon_social' => $razonSocial,
                 'rut' => $rut,
                 'direccion' => $direccion,
-                'comuna' => $comuna
+                'comuna' => $comuna,
+                'giro' => $giro
             ];
         } else {
             $mensaje = "No se pudieron guardar los datos.";
@@ -94,6 +97,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="form-group">
             <label for="razon_social">Razón Social:</label>
             <input type="text" class="form-control" id="razon_social" name="razon_social" required value="<?php echo htmlspecialchars($datosNegocio['razon_social']); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+        </div>
+        <div class="form-group">
+            <label for="giro">Giro:</label>
+            <input type="text" class="form-control" id="giro" name="giro" required value="<?php echo htmlspecialchars($datosNegocio['giro'] ?? ''); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         </div>
         <div class="form-group">
             <label for="rut">RUT:</label>
