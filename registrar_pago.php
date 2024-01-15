@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $total = $_POST['total'];
     $idUsuario = $_POST['idUsuario'];
     $montoPagadoCliente = $_POST['montoPagadoCliente'];
+    $_SESSION['montoPagadoCliente'] = $montoPagadoCliente;
     $fechaActual = date("Y-m-d");
     $iva = $_POST['iva'];
     $totalConIva = $_POST['totalConIva'];

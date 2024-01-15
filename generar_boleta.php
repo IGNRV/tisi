@@ -16,6 +16,10 @@ $medioPago = urldecode($_GET['medioPago']); // Asegúrate de decodificar el valo
 $total = isset($_GET['total']) ? floatval($_GET['total']) : 0;
 $diferencia = isset($_GET['diferencia']) ? floatval($_GET['diferencia']) : 0;
 $productosVendidos = json_decode($_GET['productosVendidos'], true);
+$montoPagadoCliente = $_SESSION['montoPagadoCliente'];
+
+
+
 
 // Obtener los datos de la empresa
 $idUsuario = $_SESSION['id'];
@@ -88,6 +92,8 @@ $pdf->Cell(40, 10, "Total con IVA: $" . number_format($totalConIVA, 2, '.', ''))
 $pdf->Ln();
 
 $pdf->Cell(40, 10, "Medio de Pago: " . $medioPago);
+$pdf->Ln();
+$pdf->Cell(40, 10, "Monto Pagado por Cliente: $" . number_format($montoPagadoCliente, 2, '.', ''));
 $pdf->Ln();
 $pdf->Cell(40, 10, "Diferencia: $" . number_format($diferencia, 2, '.', ''));
 
