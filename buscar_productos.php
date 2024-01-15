@@ -19,14 +19,13 @@ if (isset($_SESSION['id'])) {
 if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     $buscar = $_POST['buscar'];
 
-    // Modifica esta consulta para incluir la columna 'kilogramos'
     $query = "SELECT p.nombre_px, p.precio, p.stock, p.kilogramos, c.nombre_categoria 
               FROM productos p 
               INNER JOIN categorias c ON p.id_categoria = c.id_categoria 
-              WHERE p.id_usuario = ? AND p.nombre_px LIKE CONCAT('%', ?, '%')";
+              WHERE p.id_usuario = ? AND (p.nombre_px LIKE CONCAT('%', ?, '%') OR p.codigo_producto LIKE CONCAT('%', ?, '%'))";
     
     if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("is", $_SESSION['id'], $buscar);
+        $stmt->bind_param("iss", $_SESSION['id'], $buscar, $buscar);
         $stmt->execute();
         $result = $stmt->get_result();
         $productos = [];

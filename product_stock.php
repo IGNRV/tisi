@@ -34,6 +34,11 @@ if (isset($_SESSION['id'])) {
         $mensaje_exito = 'Operación realizada con éxito.';
     }
 
+    // Comprobar si hay un mensaje de éxito por agregar producto
+if (isset($_GET['add_success'])) {
+    echo "<div class='alert alert-success'>Producto agregado con éxito.</div>";
+}
+
     $query = "SELECT id_producto, nombre_px, precio, id_categoria, stock, kilogramos, codigo_producto FROM productos WHERE id_usuario = ?"; // Agregué codigo_producto aquí
 
     if ($stmt = $conn->prepare($query)) {
@@ -58,6 +63,12 @@ if (isset($_SESSION['id'])) {
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#massUploadModal" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         Carga Masiva de Productos
     </button>
+</div>
+
+<div class="mb-3">
+    <a href="https://trackitsellit.oralisisdataservice.cl/carga_masiva.ods" class="btn btn-secondary" download>
+        Descargar Plantilla para Carga Masiva
+    </a>
 </div>
 
 <div class="table-responsive">

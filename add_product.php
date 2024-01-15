@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if ($stmt->execute()) {
-            header("Location: welcome.php?add_success=true");
+            header("Location: https://trackitsellit.oralisisdataservice.cl/welcome.php?page=products&add_success=true");
+
             exit;
         } else {
             echo "Error al agregar el producto: " . $conn->error;

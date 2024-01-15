@@ -3,11 +3,11 @@
 session_start();
 require_once 'db.php';
 require_once '/var/www/html/tisi/PHP-API-CLIENT/lib/FlowApi.class.php';
-
+/* 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
+ */
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     echo "<p class='alert alert-warning'>Por favor, inicia sesión para verificar el estado de tu suscripción.</p>";

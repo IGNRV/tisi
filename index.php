@@ -26,37 +26,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Prepara y ejecuta la consulta
-    if ($stmt = $conn->prepare("SELECT id, usuario, nombre, pass FROM usuarios WHERE email = ?")) {
+    // Prepara y ejecuta la consulta, incluyendo la verificación de cuenta_activada
+    if ($stmt = $conn->prepare("SELECT id, usuario, nombre, pass, cuenta_activada FROM usuarios WHERE email = ?")) {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
 
-        // Verifica si el usuario existe
+        // Verifica si el usuario existe y si la cuenta está activada
         if ($stmt->num_rows == 1) {
-            $stmt->bind_result($id, $usuario, $nombre, $hashed_password);
+            $stmt->bind_result($id, $usuario, $nombre, $hashed_password, $cuenta_activada);
             $stmt->fetch();
 
+            if ($cuenta_activada != 1) {
+                echo "<div class='alert alert-danger' role='alert'>Tu cuenta no está activada. Por favor, verifica tu correo electrónico o contacta al soporte.</div>";
+            } else {
             // Verifica la contraseña
             if (password_verify($password, $hashed_password)) {
-                // Crea las variables de sesión
-                $_SESSION['loggedin'] = true;
-                $_SESSION['id'] = $id;
-                $_SESSION['nombre'] = $nombre;
-
-                // Redirecciona al usuario a la página de inicio
-                header("location: welcome.php");
-            } else {
-                echo "<div class='alert alert-danger' role='alert'>Contraseña incorrecta.</div>";
-            }
+            // Crea las variables de sesión
+            $_SESSION['loggedin'] = true;
+            $_SESSION['id'] = $id;
+            $_SESSION['nombre'] = $nombre;
+            // Redirecciona al usuario a la página de bienvenida
+            header("location: welcome.php");
         } else {
-            echo "<div class='alert alert-danger' role='alert'>No se encontró ninguna cuenta con ese correo electrónico.</div>";
+            echo "<div class='alert alert-danger' role='alert'>Contraseña incorrecta.</div>";
         }
-
-        $stmt->close();
     }
-    // Cierra la conexión
-    $conn->close();
+} else {
+    echo "<div class='alert alert-danger' role='alert'>No se encontró ninguna cuenta con ese correo electrónico.</div>";
+}
+
+$stmt->close();
+}
+// Cierra la conexión
+$conn->close();
 }
 ?>
 
