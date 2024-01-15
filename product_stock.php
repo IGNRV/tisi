@@ -34,7 +34,8 @@ if (isset($_SESSION['id'])) {
         $mensaje_exito = 'Operación realizada con éxito.';
     }
 
-    $query = "SELECT id_producto, nombre_px, precio, id_categoria, stock, kilogramos FROM productos WHERE id_usuario = ?";
+    $query = "SELECT id_producto, nombre_px, precio, id_categoria, stock, kilogramos, codigo_producto FROM productos WHERE id_usuario = ?"; // Agregué codigo_producto aquí
+
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("i", $id_usuario);
         $stmt->execute();
@@ -42,7 +43,7 @@ if (isset($_SESSION['id'])) {
 
         // Mostrar mensaje de éxito si existe
         if (!empty($mensaje_exito)) {
-            echo "<div class='alert alert-success'>" . htmlspecialchars($mensaje_exito) . "</div>";
+        echo "<div class='alert alert-success'>" . htmlspecialchars($mensaje_exito) . "</div>";
         }
 ?>
 
@@ -63,6 +64,7 @@ if (isset($_SESSION['id'])) {
     <table class="table" id="productsTable">
         <thead class="thead-dark">
             <tr>
+                <th>Código Producto</th>
                 <th>Producto</th>
                 <th>Precio</th>
                 <th>Categoría</th>
@@ -74,6 +76,7 @@ if (isset($_SESSION['id'])) {
         <tbody>
             <?php while ($row = $result->fetch_assoc()) { ?>
             <tr>
+                <td><?php echo htmlspecialchars($row['codigo_producto']); ?></td>
                 <td><?php echo htmlspecialchars($row['nombre_px']); ?></td>
                 <td><?php echo htmlspecialchars($row['precio']); ?></td>
                 <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
@@ -97,6 +100,12 @@ if (isset($_SESSION['id'])) {
                         </div>
                         <form action="update_product.php" method="POST">
                             <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="codigo_producto<?php echo $row['id_producto']; ?>">
+                                        Código del Producto:
+                                    </label>
+                                    <input type="text" id="codigo_producto<?php echo $row['id_producto']; ?>" name="codigo_producto" class="form-control" value="<?php echo htmlspecialchars($row['codigo_producto']); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+                                </div>
                                 <div class="form-group">
                                     <label>Producto</label>
                                     <input type="text" name="nombre_px" class="form-control" value="<?php echo htmlspecialchars($row['nombre_px']); ?>">
@@ -177,6 +186,10 @@ if (isset($_SESSION['id'])) {
             </div>
             <form action="add_product.php" method="POST">
                 <div class="modal-body">
+                    <div class="form-group">
+                        <label>Código del Producto</label>
+                        <input type="text" name="codigo_producto" class="form-control">
+                    </div>
                     <div class="form-group">
                         <label>Producto</label>
                         <input type="text" name="nombre_px" class="form-control">

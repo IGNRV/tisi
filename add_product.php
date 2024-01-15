@@ -4,6 +4,7 @@ require_once 'db.php';
 // Verifica si el formulario ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Recoge los datos del formulario
+    $codigo_producto = $_POST['codigo_producto']; // Nuevo campo para el código del producto
     $nombre_px = $_POST['nombre_px'];
     $precio = $_POST['precio'];
     $id_categoria = $_POST['id_categoria'];
@@ -13,16 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Prepara la consulta para insertar el nuevo producto
     if ($tipo_cantidad == 'kilogramos') {
-        $query = "INSERT INTO productos (nombre_px, precio, id_categoria, kilogramos, id_usuario) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, kilogramos, id_usuario) VALUES (?, ?, ?, ?, ?, ?)";
     } else {
-        $query = "INSERT INTO productos (nombre_px, precio, id_categoria, stock, id_usuario) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, stock, id_usuario) VALUES (?, ?, ?, ?, ?, ?)";
     }
 
     if ($stmt = $conn->prepare($query)) {
         if ($tipo_cantidad == 'kilogramos') {
-            $stmt->bind_param("sdiis", $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
+            $stmt->bind_param("ssdiis", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
         } else {
-            $stmt->bind_param("sdiis", $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
+            $stmt->bind_param("ssdiis", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
         }
 
         if ($stmt->execute()) {
