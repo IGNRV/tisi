@@ -23,10 +23,11 @@ if (isset($_SESSION['id']) && isset($_FILES['fileUpload'])) {
             $precio = $sheetData[$i]['B']; // Precio
             $stock = isset($sheetData[$i]['C']) ? $sheetData[$i]['C'] : 0; // Stock, con 0 como valor predeterminado
             $kilogramos = isset($sheetData[$i]['D']) ? $sheetData[$i]['D'] : 0; // Kilogramos, con 0 como valor predeterminado
+            $codigo_producto = isset($sheetData[$i]['E']) ? $sheetData[$i]['E'] : 0; // Kilogramos, con 0 como valor predeterminado
 
             // Preparar consulta SQL
-            $stmt = $conn->prepare("INSERT INTO productos (nombre_px, precio, stock, kilogramos, id_categoria, id_usuario) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("siidii", $nombre_px, $precio, $stock, $kilogramos, $categoria_etc_id, $id_usuario);
+            $stmt = $conn->prepare("INSERT INTO productos (nombre_px, precio, stock, kilogramos, id_categoria, id_usuario, codigo_producto) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("siidiis", $nombre_px, $precio, $stock, $kilogramos, $categoria_etc_id, $id_usuario, $codigo_producto);
             $stmt->execute();
         }
 
