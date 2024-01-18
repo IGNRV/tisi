@@ -66,9 +66,10 @@ $conn->close();
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Inicia sesión - Track It / Sell It</title>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <style>
         /* Estilo adicional para centrar verticalmente el formulario de inicio de sesión */

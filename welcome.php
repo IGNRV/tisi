@@ -14,9 +14,10 @@ require_once 'db.php';
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bienvenido</title>
+    <title>Bienvenido - Track It / Sell It</title>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <style>
   body {
     font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
