@@ -41,21 +41,31 @@
   </ul>
 </div>
 <style>
-  /* Estilos existentes... */
+  .nav-link:hover {
+  background-color: #f8f9fa; /* Cambia esto por el color de resaltado deseado */
+  border-radius: .25rem; /* Opcional: si deseas bordes redondeados */
+  text-decoration: none; /* Elimina el subrayado del texto */
+}
 
-  .icono-venta {
-    height: 1em; /* Ajusta esto según sea necesario */
-    width: auto;
-    margin-right: 5px; /* Espacio entre el ícono y el texto */
-    vertical-align: middle; /* Alinea el ícono con el texto */
-  }
-  
-  /* Agregar estilo para la paginación */
-  .pagination a {
-    margin: 0 10px; /* Aumenta el margen a los lados del enlace */
-    text-decoration: none;
-    color: #4e73df;
-  }
-  
-  /* Otras reglas de estilo que ya tengas... */
+.nav-link:hover .icono-venta {
+  filter: brightness(90%); /* Opcional: cambia el brillo del ícono al pasar el cursor */
+}
+
+/* Estilos existentes... */
+.icono-venta {
+  height: 1em;
+  width: auto;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* Agregar estilo para la paginación */
+.pagination a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #4e73df;
+}
+
+/* Otras reglas de estilo que ya tengas... */
+
 </style>
