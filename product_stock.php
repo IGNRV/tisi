@@ -423,7 +423,7 @@ a:hover {
 // Paginación de la tabla de productos
 document.addEventListener('DOMContentLoaded', function() {
     var tableBody = document.querySelector('#productsTable tbody');
-    var rowsPerPage = 10; // Cantidad de filas por página
+    var rowsPerPage = 5; // Cantidad de filas por página
     var rows = tableBody.querySelectorAll('tr');
     var pagesCount = Math.ceil(rows.length / rowsPerPage); // Calcula el número total de páginas
 

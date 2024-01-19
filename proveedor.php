@@ -219,6 +219,48 @@ function eliminarProveedor(id_proveedor) {
 }
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tableBody = document.querySelector('.table tbody');
+    var rowsPerPage = 5;  // Define la cantidad de filas por página
+    var rows = tableBody.querySelectorAll('tr');
+    var pagesCount = Math.ceil(rows.length / rowsPerPage);
+
+    function displayPage(page) {
+        var start = (page - 1) * rowsPerPage;
+        var end = start + rowsPerPage;
+
+        rows.forEach(row => row.style.display = 'none');
+        for (var i = start; i < end && i < rows.length; i++) {
+            rows[i].style.display = '';
+        }
+    }
+
+    // Crear paginación
+    var pagination = document.createElement('div');
+    pagination.className = 'pagination';
+
+    for (var i = 1; i <= pagesCount; i++) {
+        var pageLink = document.createElement('a');
+        pageLink.innerText = i;
+        pageLink.href = '#';
+        pageLink.dataset.page = i;
+        pageLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            displayPage(this.dataset.page);
+        });
+        pagination.appendChild(pageLink);
+    }
+
+    // Añadir paginación después de la tabla
+    tableBody.closest('.table-responsive').after(pagination);
+
+    // Mostrar la primera página inicialmente
+    displayPage(1);
+});
+</script>
+
+
 <?php
 $conn->close();
 ?>

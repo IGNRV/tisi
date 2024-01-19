@@ -71,6 +71,16 @@ require_once 'db.php';
 .table {
     margin-bottom: 20px;
 }
+.pagination a {
+    margin: 0 10px; /* Aumenta el espacio entre los números de la paginación */
+    text-decoration: none;
+    color: #4e73df;
+    font-weight: bold; /* Hace que los números sean más visibles */
+}
+
+.pagination a:hover {
+    text-decoration: underline;
+}
 </style>
 
 
