@@ -48,23 +48,25 @@ function setActive($pageName) {
 </div>
 <style>
   .nav-link.active {
-    color: white !important; /* Asegura que el color sea blanco para el texto */
+    color: white !important; /* Asegura que el texto sea blanco para el enlace activo */
     background-color: #4e73df !important; /* Color de fondo para el enlace activo */
   }
 
   .nav-link.active .icono-venta {
-    filter: none; /* Si deseas que el ícono no tenga ningún filtro aplicado cuando está activo */
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+    /* Este filtro cambia el color del icono a blanco. Ajusta si es necesario. */
   }
 
-  /* Asegúrate de que :hover no sobrescriba el estilo de .active */
+  /* Estilos para el estado hover que no afectan al enlace activo */
   .nav-link:not(.active):hover {
-    background-color: #f8f9fa; /* Color de resaltado al pasar el cursor */
+    background-color: #f8f9fa; /* Color de fondo al pasar el cursor */
     color: black; /* Color del texto al pasar el cursor */
   }
 
   .nav-link:not(.active):hover .icono-venta {
     filter: brightness(90%); /* Opcional: cambia el brillo del ícono al pasar el cursor */
   }
+
 
 /* Estilos existentes... */
 .icono-venta {
