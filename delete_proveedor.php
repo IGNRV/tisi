@@ -12,7 +12,7 @@ if (isset($_GET['id_proveedor'])) {
         $stmt->execute();
 
         // Redirige de vuelta a la página de proveedores con un mensaje de éxito
-        header("Location: http://localhost:8000/welcome.php?page=proveedores&delete_success=true");
+        header("Location: https://trackitsellit.oralisisdataservice.cl/welcome.php?page=proveedores&delete_success=true");
     } else {
         echo "Error al preparar la consulta: " . $conn->error;
     }

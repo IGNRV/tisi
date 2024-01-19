@@ -11,14 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre_px = $_POST['nombre_px'];
     $precio = $_POST['precio'];
     $id_categoria = $_POST['id_categoria'];
+    $id_proveedor = $_POST['id_proveedor']; // Añadir esta línea para capturar el id_proveedor seleccionado
     $stock = isset($_POST['stock']) ? $_POST['stock'] : 0; // Asigna 0 si no se proporciona stock
     $kilogramos = isset($_POST['kilogramos']) ? floatval($_POST['kilogramos']) : null;
     $codigo_producto = $_POST['codigo_producto'];
 
-    $query = "UPDATE productos SET nombre_px = ?, precio = ?, id_categoria = ?, stock = ?, kilogramos = ?, codigo_producto = ? WHERE id_producto = ?";
+    // Incluir id_proveedor en la consulta de actualización
+    $query = "UPDATE productos SET nombre_px = ?, precio = ?, id_categoria = ?, id_proveedor = ?, stock = ?, kilogramos = ?, codigo_producto = ? WHERE id_producto = ?";
 
     if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("ssiidsi", $nombre_px, $precio, $id_categoria, $stock, $kilogramos, $codigo_producto, $id_producto);
+        $stmt->bind_param("ssiiidsi", $nombre_px, $precio, $id_categoria, $id_proveedor, $stock, $kilogramos, $codigo_producto, $id_producto);
 
         if ($stmt->execute()) {
             // Redirecciona o maneja la respuesta como prefieras

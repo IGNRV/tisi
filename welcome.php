@@ -14,10 +14,9 @@ require_once 'db.php';
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bienvenido - Track It / Sell It</title>
+    <title>Bienvenido</title>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <style>
   body {
     font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -90,9 +89,9 @@ require_once 'db.php';
                     case 'products':
                         include 'product_stock.php';
                         break;
-                    /* case 'result':
-                        include 'result.php';
-                        break; */
+                    case 'proveedores':
+                        include 'proveedor.php';
+                        break;
                     case 'configuracion':
                         include 'configuracion.php';
                         break;

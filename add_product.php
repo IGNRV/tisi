@@ -11,19 +11,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tipo_cantidad = $_POST['tipo_cantidad'];
     $cantidad = $_POST['cantidad'];
     $id_usuario = $_POST['id_usuario']; // Asegúrate de validar y limpiar este valor
+    $id_proveedor = $_POST['id_proveedor']; // Captura el id_proveedor seleccionado
+
 
     // Prepara la consulta para insertar el nuevo producto
     if ($tipo_cantidad == 'kilogramos') {
-        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, kilogramos, id_usuario) VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, kilogramos, id_usuario, id_proveedor) VALUES (?, ?, ?, ?, ?, ?, ?)";
     } else {
-        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, stock, id_usuario) VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, stock, id_usuario, id_proveedor) VALUES (?, ?, ?, ?, ?, ?, ?)";
     }
 
     if ($stmt = $conn->prepare($query)) {
         if ($tipo_cantidad == 'kilogramos') {
-            $stmt->bind_param("ssdiis", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
+            $stmt->bind_param("ssdiisi", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario, $id_proveedor);
         } else {
-            $stmt->bind_param("ssdiis", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario);
+            $stmt->bind_param("ssdiisi", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario, $id_proveedor);
         }
 
         if ($stmt->execute()) {

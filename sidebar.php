@@ -15,6 +15,9 @@
     <li class="nav-item"> 
       <a href="welcome.php?page=cuadratura" class="nav-link text-black" style="color: black; font-size: 18px; margin-left: 18px">Cuadratura de Caja</a>
     </li>
+    <li class="nav-item"> 
+      <a href="welcome.php?page=proveedores" class="nav-link text-black" style="color: black; font-size: 18px; margin-left: 18px">Proveedores</a>
+    </li>
     <li class="nav-item">
       <a href="welcome.php?page=configuracion" class="nav-link text-black" style="color: black; font-size: 18px; margin-left: 18px">Configuracion</a>
     </li>

@@ -34,6 +34,19 @@ if (isset($_SESSION['id'])) {
         $stmt_categorias->close();
     }
 
+    // Obtener proveedores disponibles
+    $proveedores = [];
+    if ($stmt_proveedores = $conn->prepare("SELECT id_proveedor, nombre_proveedor FROM proveedores WHERE id_usuario = ?")) {
+        $stmt_proveedores->bind_param("i", $id_usuario);
+        $stmt_proveedores->execute();
+        $result_proveedores = $stmt_proveedores->get_result();
+        while ($proveedor = $result_proveedores->fetch_assoc()) {
+            $proveedores[$proveedor['id_proveedor']] = $proveedor['nombre_proveedor'];
+        }
+        $stmt_proveedores->close();
+    }
+
+
     // Comprobar si hay un mensaje de éxito
     $mensaje_exito = '';
     if (isset($_GET['update_success'])) {
@@ -45,7 +58,11 @@ if (isset($_GET['add_success'])) {
     echo "<div class='alert alert-success'>Producto agregado con éxito.</div>";
 }
 
-    $query = "SELECT id_producto, nombre_px, precio, id_categoria, stock, kilogramos, codigo_producto FROM productos WHERE id_usuario = ?"; // Agregué codigo_producto aquí
+$query = "SELECT p.id_producto, p.nombre_px, p.precio, p.id_categoria, p.stock, p.kilogramos, p.codigo_producto, pr.nombre_proveedor 
+FROM productos p
+LEFT JOIN proveedores pr ON p.id_proveedor = pr.id_proveedor
+WHERE p.id_usuario = ?";
+
 
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("i", $id_usuario);
@@ -80,16 +97,17 @@ if (isset($_GET['add_success'])) {
 <div class="table-responsive">
     <table class="table" id="productsTable">
         <thead class="thead-dark">
-            <tr>
-                <th>Código Producto</th>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Categoría</th>
-                <th>Stock</th>
-                <th>Kilogramos</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
+        <tr>
+            <th>Código Producto</th>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Categoría</th>
+            <th>Stock</th>
+            <th>Kilogramos</th>
+            <th>Proveedor</th> <!-- Nueva columna -->
+            <th>Acciones</th>
+        </tr>
+    </thead>
         <tbody>
             <?php while ($row = $result->fetch_assoc()) { ?>
             <tr>
@@ -99,6 +117,7 @@ if (isset($_GET['add_success'])) {
                 <td><?php echo htmlspecialchars($categorias[$row['id_categoria']]); ?></td>
                 <td><?php echo $row['stock'] != 0 ? htmlspecialchars($row['stock']) : '-'; ?></td> <!-- Condición para 'stock' -->
                 <td><?php echo $row['kilogramos'] != 0 ? htmlspecialchars($row['kilogramos']) : '-'; ?></td> <!-- Condición para 'kilogramos' -->
+                <td><?php echo htmlspecialchars($row['nombre_proveedor']); ?></td> <!-- Mostrar nombre del proveedor -->
                 <td>
                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal<?php echo $row['id_producto']; ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Editar</button>
                     <a href="delete_product.php?id=<?php echo $row['id_producto']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de querer eliminar este producto?');" >Eliminar</a>
@@ -141,6 +160,16 @@ if (isset($_GET['add_success'])) {
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                <label>Proveedor</label>
+                <select name="id_proveedor" class="form-control">
+                    <?php foreach ($proveedores as $id_prov => $nombre_prov) : ?>
+                        <option value="<?php echo $id_prov; ?>" <?php if ($nombre_prov == $row['nombre_proveedor']) echo 'selected'; ?>>
+                            <?php echo htmlspecialchars($nombre_prov); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
                                 <div class="form-group">
                                     <label>Kilogramos</label>
                                     <input type="text" name="kilogramos" class="form-control" value="<?php echo htmlspecialchars($row['kilogramos']); ?>" <?php echo $row['stock'] != 0 ? 'disabled' : ''; ?>>
@@ -222,6 +251,14 @@ if (isset($_GET['add_success'])) {
                                 <option value="<?php echo $id_cat; ?>">
                                     <?php echo htmlspecialchars($nombre_cat); ?>
                                 </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Proveedor</label>
+                        <select name="id_proveedor" class="form-control">
+                            <?php foreach ($proveedores as $id_prov => $nombre_prov): ?>
+                                <option value="<?php echo $id_prov; ?>"><?php echo htmlspecialchars($nombre_prov); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
