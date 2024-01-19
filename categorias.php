@@ -19,6 +19,12 @@ if (isset($_SESSION['id'])) {
         $estadoSuscripcionStmt->close();
     }
 
+    if ($estadoSuscripcion == 0) {
+      echo "<div class='alert alert-warning' role='alert'>
+              No tienes una suscripción activa. Por favor, activa tu suscripción en el menú Suscripción por $20.000.
+            </div>";
+  }
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['id_categoria'], $_POST['nombre_categoria'])) {
             $id_categoria = $_POST['id_categoria'];

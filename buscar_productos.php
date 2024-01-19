@@ -16,6 +16,13 @@ if (isset($_SESSION['id'])) {
     }
 }
 
+// Si el estado de suscripción es 0, muestra el mensaje
+if ($estadoSuscripcion == 0) {
+    echo "<div class='alert alert-warning' role='alert'>
+            No tienes una suscripción activa. Por favor, activa tu suscripción en el menú Suscripción por $20.000.
+          </div>";
+}
+
 if (isset($_POST['buscar']) && !empty($_POST['buscar'])) {
     $buscar = $_POST['buscar'];
 

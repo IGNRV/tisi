@@ -20,6 +20,11 @@ if (isset($_SESSION['id'])) {
         $estadoSuscripcionStmt->fetch();
         $estadoSuscripcionStmt->close();
     }
+    if ($estadoSuscripcion == 0) {
+        echo "<div class='alert alert-warning' role='alert'>
+                No tienes una suscripción activa. Por favor, activa tu suscripción en el menú Suscripción por $20.000.
+              </div>";
+    }
 }
 
 // Consulta para obtener los nombres de los medios de pago

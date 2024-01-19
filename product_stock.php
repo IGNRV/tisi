@@ -16,6 +16,12 @@ if (isset($_SESSION['id'])) {
         $estadoSuscripcionStmt->close();
     }
 
+    if ($estadoSuscripcion == 0) {
+        echo "<div class='alert alert-warning' role='alert'>
+                No tienes una suscripción activa. Por favor, activa tu suscripción en el menú Suscripción por $20.000.
+              </div>";
+    }
+
     // Obtener categorías disponibles
     $categorias = [];
     if ($stmt_categorias = $conn->prepare("SELECT id_categoria, nombre_categoria FROM categorias WHERE id_usuario = ?")) {

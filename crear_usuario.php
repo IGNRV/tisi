@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $mail->Body    = "Hola " . $nombre . ",<br>Para activar tu cuenta, por favor haz clic en el siguiente enlace: <a href='" . $enlace_activacion . "'>Activar Cuenta</a>";
 
                     $mail->send();
-                    $_SESSION['success_message'] = 'Usuario creado con éxito. Se ha enviado un correo electrónico para activar la cuenta.';
+                    $_SESSION['success_message'] = 'Usuario creado con éxito. Se ha enviado un correo electrónico para activar la cuenta. Revisa el "Spam" o los "Correos no deseados" en caso de que no aparezca en tu bandeja de entrada.';
                 } catch (Exception $e) {
                     $_SESSION['error_message'] = "El mensaje no pudo ser enviado. Error de Mailer: {$mail->ErrorInfo}";
                 }
