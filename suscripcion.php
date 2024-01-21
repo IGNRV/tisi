@@ -3,11 +3,12 @@
 session_start();
 require_once 'db.php';
 require_once '/var/www/html/tisi/PHP-API-CLIENT/lib/FlowApi.class.php';
-/* 
+/*
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
- */
+*/
+
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     echo "<p class='alert alert-warning'>Por favor, inicia sesión para verificar el estado de tu suscripción.</p>";
@@ -15,6 +16,27 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 }
 
 $userId = $_SESSION['id']; // Obtiene el ID del usuario de la sesión
+
+// Verificar si el usuario tiene un descuento inicial
+$descuentoQuery = "SELECT descuento_inicial FROM usuarios WHERE id = ?";
+$descuentoInicial = 0; // Valor predeterminado
+
+if ($descuentoStmt = $conn->prepare($descuentoQuery)) {
+    $descuentoStmt->bind_param("i", $userId);
+    $descuentoStmt->execute();
+    $descuentoStmt->bind_result($descuentoInicial);
+    $descuentoStmt->fetch();
+    $descuentoStmt->close();
+}
+
+// Ajustar monto de acuerdo al descuento inicial
+$monto = ($descuentoInicial == 0) ? 10000 : 20000;
+
+if ($descuentoInicial == 0) {
+    echo "<div class='alert alert-info' role='alert'>";
+    echo "¡Buenas noticias! Tu primera suscripción tiene un valor especial de 10.000 CLP.";
+    echo "</div>";
+}
 
 // Prepara la consulta SQL para verificar el estado de suscripción y suscripciones pagadas
 $query = "SELECT u.estado_suscripcion, u.email, s.suscripciones_pagadas FROM usuarios u LEFT JOIN suscripcion_tisi s ON u.id = s.id_usuario WHERE u.id = ?";
@@ -40,7 +62,7 @@ if ($stmt = $conn->prepare($query)) {
             "commerceOrder" => $commerceOrder,
             "subject" => "Pago de suscripción",
             "currency" => "CLP",
-            "amount" => 20000,
+            "amount" => $monto,
             "email" => $userEmail,
             "paymentMethod" => 9,
             "urlConfirmation" => Config::get("BASEURL") . "/confirm.php",
@@ -61,7 +83,6 @@ if ($stmt = $conn->prepare($query)) {
                 $insertStmt->execute();
                 $insertStmt->close();
             }
-
 
             // Prepara url para redireccionar el browser del pagador
             $redirect = $response["url"] . "?token=" . $response["token"];

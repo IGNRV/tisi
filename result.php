@@ -29,41 +29,43 @@ try {
             $stmt->store_result();
             $stmt->bind_result($oralisisUserId);
             if ($stmt->fetch()) {
-                // Actualizar estado_suscripcion en la tabla usuarios
-                $updateQuery = "UPDATE usuarios SET estado_suscripcion = 1 WHERE id = ?";
-                if ($updateStmt = $conn->prepare($updateQuery)) {
-                    $updateStmt->bind_param("i", $oralisisUserId);
-                    $updateStmt->execute();
-                    $updateStmt->close();
 
-                    // Verificar si ya existe una suscripción para el usuario
-                    $checkSuscripcionQuery = "SELECT id FROM suscripcion_tisi WHERE id_usuario = ?";
-                    if ($checkStmt = $conn->prepare($checkSuscripcionQuery)) {
-                        $checkStmt->bind_param("i", $oralisisUserId);
-                        $checkStmt->execute();
-                        $checkStmt->store_result();
-
-                        if ($checkStmt->num_rows > 0) {
-                            // Actualizar suscripciones_pagadas en la tabla suscripcion_tisi
-                            $updateSuscripcionQuery = "UPDATE suscripcion_tisi SET suscripciones_pagadas = suscripciones_pagadas + 1 WHERE id_usuario = ?";
-                            if ($updateSuscripcionStmt = $conn->prepare($updateSuscripcionQuery)) {
-                                $updateSuscripcionStmt->bind_param("i", $oralisisUserId);
-                                $updateSuscripcionStmt->execute();
-                                $updateSuscripcionStmt->close();
-                            }
-                        } else {
-                            // Insertar nueva suscripción en la tabla suscripcion_tisi
-                            $insertSuscripcionQuery = "INSERT INTO suscripcion_tisi (dia_suscripcion, tipo_suscripcion, fecha_activacion, id_usuario, suscripciones_pagadas) VALUES (1, 1, NOW(), ?, 1)";
-                            if ($insertSuscripcionStmt = $conn->prepare($insertSuscripcionQuery)) {
-                                $insertSuscripcionStmt->bind_param("i", $oralisisUserId);
-                                $insertSuscripcionStmt->execute();
-                                $insertSuscripcionStmt->close();
-                            }
-                        }
-                        $checkStmt->close();
-                    }
+                // Actualizar estado_suscripcion y descuento_inicial en la tabla usuarios
+                $updateUserQuery = "UPDATE usuarios SET estado_suscripcion = 1, descuento_inicial = ? WHERE id = ?";
+                if ($updateUserStmt = $conn->prepare($updateUserQuery)) {
+                    $nuevoDescuento = 1; // Define aquí el valor que quieres insertar
+                    $updateUserStmt->bind_param("ii", $nuevoDescuento, $oralisisUserId);
+                    $updateUserStmt->execute();
+                    $updateUserStmt->close();
                 } else {
-                    throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
+                    throw new Exception("Error al preparar la consulta de actualización de usuario: " . $conn->error);
+                }
+
+                // Verificar si ya existe una suscripción para el usuario
+                $checkSuscripcionQuery = "SELECT id FROM suscripcion_tisi WHERE id_usuario = ?";
+                if ($checkStmt = $conn->prepare($checkSuscripcionQuery)) {
+                    $checkStmt->bind_param("i", $oralisisUserId);
+                    $checkStmt->execute();
+                    $checkStmt->store_result();
+
+                    if ($checkStmt->num_rows > 0) {
+                        // Actualizar suscripciones_pagadas en la tabla suscripcion_tisi
+                        $updateSuscripcionQuery = "UPDATE suscripcion_tisi SET suscripciones_pagadas = suscripciones_pagadas + 1 WHERE id_usuario = ?";
+                        if ($updateSuscripcionStmt = $conn->prepare($updateSuscripcionQuery)) {
+                            $updateSuscripcionStmt->bind_param("i", $oralisisUserId);
+                            $updateSuscripcionStmt->execute();
+                            $updateSuscripcionStmt->close();
+                        }
+                    } else {
+                        // Insertar nueva suscripción en la tabla suscripcion_tisi
+                        $insertSuscripcionQuery = "INSERT INTO suscripcion_tisi (dia_suscripcion, tipo_suscripcion, fecha_activacion, id_usuario, suscripciones_pagadas) VALUES (1, 1, NOW(), ?, 1)";
+                        if ($insertSuscripcionStmt = $conn->prepare($insertSuscripcionQuery)) {
+                            $insertSuscripcionStmt->bind_param("i", $oralisisUserId);
+                            $insertSuscripcionStmt->execute();
+                            $insertSuscripcionStmt->close();
+                        }
+                    }
+                    $checkStmt->close();
                 }
             } else {
                 echo "No se encontró el registro correspondiente en registro_de_pagos.";
