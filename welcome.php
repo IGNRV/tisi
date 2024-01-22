@@ -426,7 +426,7 @@ for (var i = 0; i < filas.length; i++) {
         console.error('Error:', error);
         alert("Error al registrar el pago.");
     });
-    window.open('generar_boleta.php?medioPago=' + encodeURIComponent(medioPagoNombre) + '&total=' + total + '&diferencia=' + encodeURIComponent(diferencia) + '&productosVendidos=' + encodeURIComponent(JSON.stringify(productosVendidos)), '_blank');
+    window.open('generar_boleta.php?medioPago=' + encodeURIComponent(medioPagoNombre) + '&total=' + total + '&montoAdicional=' + encodeURIComponent(document.getElementById('montoAdicional').value) + '&diferencia=' + encodeURIComponent(diferencia) + '&productosVendidos=' + encodeURIComponent(JSON.stringify(productosVendidos)), '_blank');
 
 });
 

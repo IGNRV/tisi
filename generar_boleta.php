@@ -17,6 +17,8 @@ $total = isset($_GET['total']) ? floatval($_GET['total']) : 0;
 $diferencia = isset($_GET['diferencia']) ? floatval($_GET['diferencia']) : 0;
 $productosVendidos = json_decode($_GET['productosVendidos'], true);
 $montoPagadoCliente = $_SESSION['montoPagadoCliente'];
+$montoAdicional = isset($_GET['montoAdicional']) ? floatval($_GET['montoAdicional']) : 0;
+
 
 
 
@@ -76,6 +78,8 @@ foreach ($productosVendidos as $producto) {
     }
 
 // Mostrar total, medio de pago y diferencia
+$pdf->Cell(40, 10, "Monto Adicional: $" . number_format($montoAdicional, 0, '.', ''));
+$pdf->Ln();
 $pdf->Ln(10);
 $pdf->Cell(40, 10, "Total: $" . number_format($total, 0, '.',
 ''));
