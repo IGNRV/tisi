@@ -194,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
             divMontoAdicional.style.display = 'block';
             inputMontoPagar.value = '';
             inputMontoPagar.disabled = true;
+            inputDiferencia.value = ''; // Borra el contenido de "Diferencia" cuando se marca el checkbox
         } else {
             inputMontoAdicional.value = '0'; // Establecer valor 0 al desactivar checkbox
             divMontoAdicional.style.display = 'none';
@@ -211,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         calcularTotal(); // Recalcular el total cada vez que se cambie el monto adicional
     });
+
 
     function calcularTotal() {
     var filas = document.getElementById('tabla-seleccionados').querySelector('tbody').rows;
