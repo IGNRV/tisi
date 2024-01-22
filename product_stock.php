@@ -277,7 +277,7 @@ WHERE p.id_usuario = ?";
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Agregar</button>
+                    <button type="submit" class="btn btn-primary" id="agregarProductoBtn">Agregar</button>
                 </div>
             </form>
         </div>
@@ -422,6 +422,17 @@ a:hover {
 <script>
 // Paginación de la tabla de productos
 document.addEventListener('DOMContentLoaded', function() {
+    var agregarProductoBtn = document.getElementById('agregarProductoBtn');
+
+    // Asegúrate de que exista el botón antes de agregarle el evento
+    if (agregarProductoBtn) {
+        agregarProductoBtn.form.addEventListener('submit', function() {
+            // Deshabilita el botón para prevenir múltiples envíos
+            agregarProductoBtn.disabled = true;
+            // Cambia el texto del botón, opcionalmente
+            agregarProductoBtn.textContent = 'Agregando...';
+        });
+    }
     var tableBody = document.querySelector('#productsTable tbody');
     var rowsPerPage = 5; // Cantidad de filas por página
     var rows = tableBody.querySelectorAll('tr');
