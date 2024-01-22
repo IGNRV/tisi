@@ -119,11 +119,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="comuna">Comuna:</label>
             <input type="text" class="form-control" id="comuna" name="comuna" required value="<?php echo htmlspecialchars($datosNegocio['comuna']); ?>" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
         </div>
-        <button type="submit" class="btn btn-primary" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Guardar</button>
+        <button type="submit" class="btn btn-primary" id="guardarBtn" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>Guardar</button>
     </form>
 </div>
 
-<!-- Incluir JS de Bootstrap y cualquier otro archivo de script relevante -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var guardarBtn = document.getElementById('guardarBtn');
+    if (guardarBtn) {
+        guardarBtn.addEventListener('click', function() {
+            // Comprueba si el botón no está deshabilitado
+            if (!guardarBtn.disabled) {
+                guardarBtn.disabled = true; // Deshabilita el botón para evitar clics adicionales
+                guardarBtn.textContent = 'Guardando...'; // Opcional: cambia el texto del botón
+                var form = guardarBtn.closest('form');
+                if (form) {
+                    form.submit(); // Envía el formulario
+                }
+            }
+        });
+    }
+});
+</script>
+
 
 </body>
 </html>
