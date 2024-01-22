@@ -12,20 +12,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cantidad = $_POST['cantidad'];
     $id_usuario = $_POST['id_usuario']; // Asegúrate de validar y limpiar este valor
     $id_proveedor = $_POST['id_proveedor']; // Captura el id_proveedor seleccionado
+    $impuesto_adicional = isset($_POST['impuesto_adicional']) ? $_POST['impuesto_adicional'] : '0';
+
 
 
     // Prepara la consulta para insertar el nuevo producto
     if ($tipo_cantidad == 'kilogramos') {
-        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, kilogramos, id_usuario, id_proveedor) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, kilogramos, id_usuario, id_proveedor, impuesto_adicional) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     } else {
-        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, stock, id_usuario, id_proveedor) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO productos (codigo_producto, nombre_px, precio, id_categoria, stock, id_usuario, id_proveedor, impuesto_adicional) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     }
 
     if ($stmt = $conn->prepare($query)) {
         if ($tipo_cantidad == 'kilogramos') {
-            $stmt->bind_param("ssdiisi", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario, $id_proveedor);
+            $stmt->bind_param("ssdiisii", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario, $id_proveedor, $impuesto_adicional);
         } else {
-            $stmt->bind_param("ssdiisi", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario, $id_proveedor);
+            $stmt->bind_param("ssdiisii", $codigo_producto, $nombre_px, $precio, $id_categoria, $cantidad, $id_usuario, $id_proveedor, $impuesto_adicional);
         }
 
         if ($stmt->execute()) {

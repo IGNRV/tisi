@@ -254,6 +254,17 @@ WHERE p.id_usuario = ?";
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="impuestoAdicionalCheck">
+  <label class="form-check-label" for="impuestoAdicionalCheck">
+    Impuesto adicional
+  </label>
+</div>
+<!-- Input para el valor del impuesto adicional, inicialmente oculto -->
+<div class="form-group d-none" id="impuestoAdicionalInput">
+  <label for="impuesto_adicional">Impuesto Adicional</label>
+  <input type="text" class="form-control" name="impuesto_adicional" id="impuesto_adicional">
+</div>
                     <div class="form-group">
                         <label>Proveedor</label>
                         <select name="id_proveedor" class="form-control">
@@ -418,7 +429,18 @@ a:hover {
     text-decoration: underline;
 }
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var impuestoCheck = document.getElementById('impuestoAdicionalCheck');
+  var impuestoInput = document.getElementById('impuestoAdicionalInput');
 
+  // Escucha para el cambio del checkbox
+  impuestoCheck.addEventListener('change', function() {
+    // Muestra u oculta el input basado en si el checkbox está marcado
+    impuestoInput.classList.toggle('d-none', !this.checked);
+  });
+});
+</script>
 <script>
 // Paginación de la tabla de productos
 document.addEventListener('DOMContentLoaded', function() {
