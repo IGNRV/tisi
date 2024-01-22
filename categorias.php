@@ -143,7 +143,7 @@ if (isset($_SESSION['id'])) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-success">Agregar</button>
+                <button type="submit" class="btn btn-success" id="agregarBtn">Agregar</button>
               </div>
             </form>
           </div>
@@ -156,6 +156,25 @@ if (isset($_SESSION['id'])) {
 
 $conn->close();
 ?>
+<script>
+// Este código se ejecutará una vez que se haya cargado completamente el DOM.
+document.addEventListener('DOMContentLoaded', function() {
+    // Selecciona el botón por su ID.
+    var agregarBtn = document.getElementById('agregarBtn');
+
+    // Asegúrate de que el botón exista en el DOM.
+    if (agregarBtn) {
+        // Agrega un controlador de eventos para el evento de 'submit' del formulario.
+        agregarBtn.form.addEventListener('submit', function() {
+            // Inmediatamente después de que el formulario se haya enviado, desactiva el botón.
+            agregarBtn.disabled = true;
+            // Opcional: Cambia el texto del botón para indicar que la acción está en proceso.
+            agregarBtn.textContent = 'Agregando...';
+        });
+    }
+});
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var editButton = document.querySelector('button[data-target="#editCategoryModal"]');
