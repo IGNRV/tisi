@@ -56,6 +56,7 @@ if ($stmt = $conn->prepare($query)) {
         echo "<p class='card-text'>" . ($estado_suscripcion == 1 ? "Suscripción activa." : "Suscripción no activa.") . "</p>";
         echo "<p class='card-text'>Suscripciones pagadas: " . ($suscripcionesPagadas ?? 0) . "</p>";
 
+
         // Prepara el arreglo de datos
         $commerceOrder = rand(1100, 2000);
         $params = array(
@@ -86,7 +87,7 @@ if ($stmt = $conn->prepare($query)) {
 
             // Prepara url para redireccionar el browser del pagador
             $redirect = $response["url"] . "?token=" . $response["token"];
-            echo "<button onclick=\"window.location.href = '$redirect';\">Pagar suscripción</button>";
+            echo "<button onclick=\"window.location.href = '$redirect';\" class='btn btn-primary'>Pagar suscripción</button>";
         } catch (Exception $e) {
             echo "Error: " . $e->getCode() . " - " . $e->getMessage();
         }
