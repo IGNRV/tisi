@@ -214,14 +214,14 @@ inputBusqueda.addEventListener('input', function() {
 
     // ...
 
-function calcularTotal() {
-    var filas = tablaSeleccionados.rows;
+    function calcularTotal() {
+    var filas = document.getElementById('tabla-seleccionados').querySelector('tbody').rows;
     var total = 0;
 
     for (var i = 0; i < filas.length; i++) {
         var precioPorUnidad = parseFloat(filas[i].cells[1].textContent.replace('$', ''));
         var cantidad = parseInt(filas[i].cells[2].textContent);
-        var esKilogramo = filas[i].cells[2].textContent.includes('gramos'); // Verifica si la unidad es en gramos
+        var esKilogramo = filas[i].cells[2].textContent.includes('gramos');
 
         if (esKilogramo) {
             cantidad /= 1000; // Convierte la cantidad a kilogramos para calcular el precio
@@ -229,6 +229,9 @@ function calcularTotal() {
 
         total += precioPorUnidad * cantidad;
     }
+
+    var montoAdicional = parseFloat(document.getElementById('montoAdicional').value) || 0;
+    total += montoAdicional;
 
     var iva = total * 0.19; // Calcula el 19% de IVA del total
     var totalConIva = total + iva; // Suma el IVA al total
@@ -238,6 +241,11 @@ function calcularTotal() {
     document.getElementById('iva').textContent = 'IVA (19%): $' + iva.toFixed(0);
     document.getElementById('totalConIva').textContent = 'Total con IVA: $' + totalConIva.toFixed(0);
 }
+
+// Event listener para el campo de monto adicional
+document.getElementById('montoAdicional').addEventListener('input', function() {
+    calcularTotal();
+});
 
 // ...
 

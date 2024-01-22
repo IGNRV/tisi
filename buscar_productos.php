@@ -138,6 +138,12 @@ if ($stmt = $conn->prepare($query_medios_pago)) {
                 <input type="text" name="montopagar" class="form-control" id="montopagar" style="font-size: 15px;" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
             </div>
 
+            <div>
+    <label for="montoAdicional" style="font-size: 18px;">Monto Adicional</label>
+    <input type="text" name="montoAdicional" class="form-control" id="montoAdicional" style="font-size: 15px;" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
+</div>
+
+
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="usarTotal" <?php echo $estadoSuscripcion == 0 ? 'disabled' : ''; ?>>
                 <label class="form-check-label" for="usarTotal" style="font-size: 15px;">Usar total de la compra</label>
