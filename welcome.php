@@ -367,12 +367,14 @@ document.getElementById('registrarPago').addEventListener('click', function() {
     var montoPagadoCliente = parseFloat(document.getElementById('montopagar').value);
     var idUsuario = '<?php echo $_SESSION['id']; ?>';
     var iva = parseFloat(document.getElementById('iva').textContent.replace('IVA (19%): $', ''));
+    var montoPagarInput = document.getElementById('montopagar');
+    var totalConIvaDiv = document.getElementById('totalConIva');
+    var montoPagar = parseFloat(montoPagarInput.value);
     var totalConIva = parseFloat(document.getElementById('totalConIva').textContent.replace('Total con IVA: $', ''));
 
-    if (montoPagadoCliente < total) {
-        // Si el monto pagado es menor que el total, mostrar un mensaje y no proceder
-        alert("El monto a pagar debe ser igual o mayor al total de la compra.");
-        return;
+    if (isNaN(montoPagar) || montoPagar < totalConIva) {
+        alert("El monto ingresado debe ser igual o mayor al total con IVA.");
+        return; // Detiene la ejecución si la condición no se cumple
     }
 
     // Crear un array con la información de los productos vendidos
