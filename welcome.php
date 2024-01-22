@@ -8,6 +8,21 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 }
 
 require_once 'db.php';
+
+// Obtener el nombre del usuario
+$userId = $_SESSION['id'];
+$nombreQuery = "SELECT nombre FROM usuarios WHERE id = ?";
+if ($stmt = $conn->prepare($nombreQuery)) {
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($nombreUsuario);
+    $stmt->fetch();
+    $stmt->close();
+} else {
+    // Manejar error
+    $nombreUsuario = "Usuario";
+}
+
 ?>
 
 
