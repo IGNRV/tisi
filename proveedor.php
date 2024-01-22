@@ -124,7 +124,7 @@ if (isset($_GET['delete_success']) && $_GET['delete_success'] == 'true') {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Agregar</button>
+                    <button type="submit" class="btn btn-primary" id="agregarProveedorBtn">Agregar</button>
                 </div>
             </form>
         </div>
@@ -210,6 +210,19 @@ if (isset($_GET['delete_success']) && $_GET['delete_success'] == 'true') {
 
 </body>
 </html>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var agregarBtn = document.getElementById('agregarProveedorBtn');
+    if (agregarBtn) {
+        agregarBtn.addEventListener('click', function() {
+            agregarBtn.disabled = true; // Deshabilita el botón
+            agregarBtn.textContent = 'Agregando...'; // Cambia el texto del botón (opcional)
+            agregarBtn.form.submit(); // Envía el formulario
+        });
+    }
+});
+</script>
+
 <script>
 function eliminarProveedor(id_proveedor) {
     if (confirm('¿Estás seguro de que deseas eliminar este proveedor?')) {
