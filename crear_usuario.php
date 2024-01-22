@@ -38,6 +38,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt = $conn->prepare($insert_query)) {
             $stmt->bind_param("sssssssiss", $usuario, $nombre, $apellidos, $email, $numero_de_telefono, $fecha_nacimiento, $pass, $estado_suscripcion, $cuenta_activada, $token_activacion);
             if($stmt->execute()){
+
+                // Obtener el ID del usuario recién insertado
+        $id_usuario = $conn->insert_id;
+
+        // Preparar la consulta SQL para insertar en la tabla categorias
+        $insert_categoria_query = "INSERT INTO categorias (nombre_categoria, id_usuario) VALUES (?, ?)";
+
+        if ($stmt_categoria = $conn->prepare($insert_categoria_query)) {
+            // Establecer 'ETC' como nombre_categoria y el ID del usuario recién creado
+            $nombre_categoria = 'ETC';
+            $stmt_categoria->bind_param("si", $nombre_categoria, $id_usuario);
+
+            if (!$stmt_categoria->execute()) {
+                // Manejar error al insertar en la tabla categorias
+                $_SESSION['error_message'] .= " Error al insertar en la tabla categorias.";
+            }
+            $stmt_categoria->close();
+        } else {
+            $_SESSION['error_message'] .= " Error al preparar la consulta para categorias: " . $conn->error;
+        }
                 // Enviar correo electrónico con PHPMailer
                 $mail = new PHPMailer(true);
                 try {
