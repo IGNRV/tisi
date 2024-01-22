@@ -30,7 +30,7 @@ if ($descuentoStmt = $conn->prepare($descuentoQuery)) {
 }
 
 // Ajustar monto de acuerdo al descuento inicial
-$monto = ($descuentoInicial == 0) ? 10000 : 20000;
+$monto = ($descuentoInicial != 1) ? 10000 : 20000;
 
 if ($descuentoInicial == 0) {
     echo "<div class='alert alert-info' role='alert'>";
