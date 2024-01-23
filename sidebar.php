@@ -40,6 +40,11 @@ function setActive($pageName) {
       </a>
     </li>
     <li class="nav-item">
+      <a href="welcome.php?page=historial" class="nav-link text-black <?php echo setActive('historial'); ?>" style="color: black; font-size: 16px; margin-left: 18px">
+        <img src="https://trackitsellit.oralisisdataservice.cl/images/schedule_FILL0_wght400_GRAD0_opsz24.svg" class="icono-venta" alt="Ícono Cuadratura de Cajas">Historial
+      </a>
+    </li>
+    <li class="nav-item">
       <a href="welcome.php?page=suscripcion" class="nav-link text-black <?php echo setActive('suscripcion'); ?>" style="color: black; font-size: 16px; margin-left: 18px">
         <img src="https://trackitsellit.oralisisdataservice.cl/images/event_repeat_FILL0_wght400_GRAD0_opsz24.svg" class="icono-venta" alt="Ícono Cuadratura de Cajas">Suscripción
       </a>

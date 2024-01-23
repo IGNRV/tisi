@@ -129,6 +129,9 @@ if ($stmt = $conn->prepare($nombreQuery)) {
                     case 'suscripcion':
                         include 'suscripcion.php';
                         break;
+                    case 'historial':
+                        include 'historial.php';
+                        break;
                     default:
                         include 'buscar_productos.php';
                         break;
