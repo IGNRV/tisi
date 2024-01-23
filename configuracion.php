@@ -1,16 +1,15 @@
 <?php
 // configuracion.php
-require_once 'db.php'; // Asume que db.php contiene la conexión a la base de datos
+require_once 'db.php';
 
 session_start();
 
-// Verificar si el usuario está logueado. Si no, redirige a index.php
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("location: index.php");
     exit;
 }
 
-$idUsuario = $_SESSION['id']; // Asume que 'id' es la clave de sesión donde se almacena el id del usuario
+$idUsuario = $_SESSION['id'];
 
 $estadoSuscripcion = 0;
 if ($estadoSuscripcionStmt = $conn->prepare("SELECT estado_suscripcion FROM usuarios WHERE id = ?")) {
@@ -20,13 +19,13 @@ if ($estadoSuscripcionStmt = $conn->prepare("SELECT estado_suscripcion FROM usua
     $estadoSuscripcionStmt->fetch();
     $estadoSuscripcionStmt->close();
 }
+
 if ($estadoSuscripcion == 0) {
     echo "<div class='alert alert-warning' role='alert'>
             No tienes una suscripción activa. Por favor, activa tu suscripción en el menú Suscripción por $20.000.
           </div>";
 }
 
-// Intentar obtener los datos existentes de la empresa
 $query = "SELECT razon_social, rut, direccion, comuna, giro FROM negocio WHERE id_usuario = ?";
 $datosNegocio = [
     'razon_social' => '',
@@ -46,42 +45,59 @@ if ($stmt = $conn->prepare($query)) {
     $stmt->close();
 }
 
-// Si se ha enviado el formulario, procesar la entrada
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recoger los valores del formulario
     $razonSocial = $_POST['razon_social'] ?? '';
     $rut = $_POST['rut'] ?? '';
     $direccion = $_POST['direccion'] ?? '';
     $comuna = $_POST['comuna'] ?? '';
-    $giro = $_POST['giro'] ?? ''; // Nuevo campo para el giro
+    $giro = $_POST['giro'] ?? '';
 
-    // Verificar si ya existen datos y elegir la consulta adecuada
+    $conn->begin_transaction();
+
     $query = $result->num_rows > 0 ? 
         "UPDATE negocio SET razon_social = ?, rut = ?, direccion = ?, comuna = ?, giro = ? WHERE id_usuario = ?" :
         "INSERT INTO negocio (razon_social, rut, direccion, comuna, giro, id_usuario) VALUES (?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($query)) {
         $stmt->bind_param("sssssi", $razonSocial, $rut, $direccion, $comuna, $giro, $idUsuario);
-        $stmt->execute();
-        if ($stmt->affected_rows > 0) {
-            $mensaje = "Datos guardados correctamente.";
-            // Actualizar los datos del negocio con los nuevos valores
-            $datosNegocio = [
-                'razon_social' => $razonSocial,
-                'rut' => $rut,
-                'direccion' => $direccion,
-                'comuna' => $comuna,
-                'giro' => $giro
-            ];
+        if ($stmt->execute()) {
+            $descripcion = "Se edito informacion del negocio";
+            $historial_query = "INSERT INTO historial_cambios (descripcion, date_created, id_usuario, id_negocio) VALUES (?, NOW(), ?, ?)";
+            
+            $idNegocio = ($result->num_rows > 0) ? $datosNegocio['id'] : $conn->insert_id;
+
+            if ($historial_stmt = $conn->prepare($historial_query)) {
+                $historial_stmt->bind_param("sii", $descripcion, $idUsuario, $idNegocio);
+                if (!$historial_stmt->execute()) {
+                    echo "Error al registrar en historial de cambios: " . $conn->error;
+                    $conn->rollback();
+                } else {
+                    $conn->commit();
+                    $mensaje = "Datos guardados correctamente.";
+                    // Actualizar los datos del negocio con los nuevos valores
+                    $datosNegocio = [
+                        'razon_social' => $razonSocial,
+                        'rut' => $rut,
+                        'direccion' => $direccion,
+                        'comuna' => $comuna,
+                        'giro' => $giro
+                    ];
+                }
+                $historial_stmt->close();
+            } else {
+                echo "Error al preparar la consulta para historial de cambios: " . $conn->error;
+                $conn->rollback();
+            }
         } else {
             $mensaje = "No se pudieron guardar los datos.";
+            $conn->rollback();
         }
         $stmt->close();
     } else {
         $mensaje = "Error al preparar la consulta: " . $conn->error;
+        $conn->rollback();
     }
 }
-
 ?>
 
 <!DOCTYPE html>
