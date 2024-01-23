@@ -63,14 +63,34 @@ if (isset($_SESSION['id'])) {
                 echo "Error al preparar la consulta de inserción: " . $conn->error;
             }
         } elseif (isset($_POST['eliminar_categoria'])) {
-            $id_categoria_eliminar = $_POST['eliminar_categoria'];
-            $delete_query = "DELETE FROM categorias WHERE id_categoria = ? AND id_usuario = ?";
-            if ($delete_stmt = $conn->prepare($delete_query)) {
-                $delete_stmt->bind_param("ii", $id_categoria_eliminar, $id_usuario);
-                if ($delete_stmt->execute()) {
-                    $mensaje_exito = 'Categoría eliminada con éxito.';
-                }
-                $delete_stmt->close();
+          $id_categoria_eliminar = $_POST['eliminar_categoria'];
+          $conn->begin_transaction();
+          $delete_query = "DELETE FROM categorias WHERE id_categoria = ? AND id_usuario = ?";
+          if ($delete_stmt = $conn->prepare($delete_query)) {
+              $delete_stmt->bind_param("ii", $id_categoria_eliminar, $id_usuario);
+              if ($delete_stmt->execute()) {
+                  // Insertar en la tabla historial_cambios
+                  $descripcion = "Se elimina categoria";
+                  $historial_query = "INSERT INTO historial_cambios (descripcion, date_created, id_usuario, id_categoria) VALUES (?, NOW(), ?, ?)";
+                  if ($historial_stmt = $conn->prepare($historial_query)) {
+                      $historial_stmt->bind_param("sii", $descripcion, $id_usuario, $id_categoria_eliminar);
+                      if (!$historial_stmt->execute()) {
+                          echo "Error al registrar en historial de cambios: " . $conn->error;
+                          $conn->rollback();
+                      } else {
+                          $conn->commit();
+                          $mensaje_exito = 'Categoría eliminada con éxito.';
+                      }
+                      $historial_stmt->close();
+                  } else {
+                      echo "Error al preparar la consulta del historial: " . $conn->error;
+                      $conn->rollback();
+                  }
+              } else {
+                  echo "Error al eliminar la categoría: " . $conn->error;
+                  $conn->rollback();
+              }
+              $delete_stmt->close();
             } else {
                 echo "Error al preparar la consulta de eliminación: " . $conn->error;
             }
