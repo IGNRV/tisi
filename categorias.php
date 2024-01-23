@@ -52,11 +52,31 @@ if (isset($_SESSION['id'])) {
             }
         } elseif (isset($_POST['nueva_categoria'])) {
             $nueva_categoria = $_POST['nueva_categoria'];
+            $conn->begin_transaction();
             $insert_query = "INSERT INTO categorias (nombre_categoria, id_usuario) VALUES (?, ?)";
             if ($insert_stmt = $conn->prepare($insert_query)) {
                 $insert_stmt->bind_param("si", $nueva_categoria, $id_usuario);
                 if ($insert_stmt->execute()) {
-                    $mensaje_exito = 'Categoría agregada con éxito.';
+                    $id_categoria_nueva = $conn->insert_id; // Obtener el ID de la categoría recién insertada
+                    $descripcion = "Se añade categoria";
+                    $historial_query = "INSERT INTO historial_cambios (descripcion, date_created, id_usuario, id_categoria) VALUES (?, NOW(), ?, ?)";
+                    if ($historial_stmt = $conn->prepare($historial_query)) {
+                        $historial_stmt->bind_param("sii", $descripcion, $id_usuario, $id_categoria_nueva);
+                        if (!$historial_stmt->execute()) {
+                            echo "Error al registrar en historial de cambios: " . $conn->error;
+                            $conn->rollback();
+                        } else {
+                            $conn->commit();
+                            $mensaje_exito = 'Categoría agregada con éxito y registrada en el historial.';
+                        }
+                        $historial_stmt->close();
+                    } else {
+                        echo "Error al preparar la consulta del historial: " . $conn->error;
+                        $conn->rollback();
+                    }
+                } else {
+                    echo "Error al agregar la categoría: " . $conn->error;
+                    $conn->rollback();
                 }
                 $insert_stmt->close();
             } else {
