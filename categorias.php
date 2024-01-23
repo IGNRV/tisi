@@ -31,12 +31,22 @@ if (isset($_SESSION['id'])) {
             $nuevo_nombre = $_POST['nombre_categoria'];
 
             $update_query = "UPDATE categorias SET nombre_categoria = ? WHERE id_categoria = ? AND id_usuario = ?";
-            if ($update_stmt = $conn->prepare($update_query)) {
-                $update_stmt->bind_param("sii", $nuevo_nombre, $id_categoria, $id_usuario);
-                if ($update_stmt->execute()) {
-                    $mensaje_exito = 'Categoría actualizada con éxito.';
-                }
-                $update_stmt->close();
+                if ($update_stmt = $conn->prepare($update_query)) {
+                    $update_stmt->bind_param("sii", $nuevo_nombre, $id_categoria, $id_usuario);
+                    if ($update_stmt->execute()) {
+                        // Insertar en la tabla historial_cambios
+                        $descripcion = "Se edita categoría";
+                        $historial_query = "INSERT INTO historial_cambios (descripcion, date_created, id_usuario, id_categoria) VALUES (?, NOW(), ?, ?)";
+                        
+                        if ($historial_stmt = $conn->prepare($historial_query)) {
+                            $historial_stmt->bind_param("sii", $descripcion, $id_usuario, $id_categoria);
+                            $historial_stmt->execute();
+                            $historial_stmt->close();
+                        }
+
+                        $mensaje_exito = 'Categoría actualizada con éxito.';
+                    }
+                    $update_stmt->close();
             } else {
                 echo "Error al preparar la consulta de actualización: " . $conn->error;
             }

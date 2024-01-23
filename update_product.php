@@ -4,6 +4,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
+if (isset($_SESSION['id'])) {
+    $id_usuario = $_SESSION['id']; // Asegúrate de que esto está correctamente asignado desde la sesión
+} else {
+    // Manejar el caso en que el ID del usuario no esté establecido
+    exit('Usuario no autenticado.');
+}
+
 require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -23,6 +31,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("ssiiidsi", $nombre_px, $precio, $id_categoria, $id_proveedor, $stock, $kilogramos, $codigo_producto, $id_producto);
 
         if ($stmt->execute()) {
+            // ID del usuario que está realizando la actualización
+            $id_usuario = $_SESSION['id'];
+
+            // Descripción de la acción realizada
+            $descripcion = 'Se edita información de producto';
+
+            // Prepara la consulta para la tabla historial_cambios
+            $query_historial = "INSERT INTO historial_cambios (descripcion, date_created, id_usuario, id_producto) VALUES (?, NOW(), ?, ?)";
+
+            if ($stmt_historial = $conn->prepare($query_historial)) {
+                $stmt_historial->bind_param("sii", $descripcion, $id_usuario, $id_producto);
+
+                if (!$stmt_historial->execute()) {
+                    // Manejar error al insertar en la tabla historial_cambios
+                    echo "Error al registrar en historial de cambios: " . $conn->error;
+                }
+                $stmt_historial->close();
+            } else {
+                echo "Error al preparar la consulta para historial de cambios: " . $conn->error;
+            }
+
             // Redirecciona o maneja la respuesta como prefieras
             header("Location: welcome.php?page=products&update_success=true");
             exit;
