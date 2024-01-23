@@ -31,8 +31,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if ($stmt->execute()) {
-            header("Location: https://trackitsellit.oralisisdataservice.cl/welcome.php?page=products&add_success=true");
+            // Obtén el último ID insertado, que corresponde al producto recién añadido
+            $id_producto_insertado = $conn->insert_id;
 
+            // Prepara la inserción en la tabla historial_cambios
+            $query_historial = "INSERT INTO historial_cambios (descripcion, date_created, id_usuario, id_producto) VALUES (?, NOW(), ?, ?)";
+            if ($stmt_historial = $conn->prepare($query_historial)) {
+                $descripcion = 'Se agrega un nuevo producto';
+                $stmt_historial->bind_param("sii", $descripcion, $id_usuario, $id_producto_insertado);
+
+                if (!$stmt_historial->execute()) {
+                    // Manejar error al insertar en la tabla historial_cambios
+                    echo "Error al registrar en historial de cambios: " . $conn->error;
+                }
+                $stmt_historial->close();
+            } else {
+                echo "Error al preparar la consulta para historial de cambios: " . $conn->error;
+            }
+
+            header("Location: https://trackitsellit.oralisisdataservice.cl/welcome.php?page=products&add_success=true");
             exit;
         } else {
             echo "Error al agregar el producto: " . $conn->error;
