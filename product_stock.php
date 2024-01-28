@@ -182,7 +182,7 @@ WHERE p.id_usuario = ?";
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                <button type="submit" class="btn btn-primary saveChangesBtn">Guardar cambios</button>
                             </div>
                         </form>
                     </div>
@@ -476,6 +476,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar la primera página inicialmente
     displayPage(1);
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Selecciona todos los botones "Guardar cambios" por su clase
+    var saveButtons = document.querySelectorAll('.saveChangesBtn');
+
+    saveButtons.forEach(function(btn) {
+        // Agrega un controlador de eventos al formulario que contiene el botón
+        btn.form.addEventListener('submit', function() {
+            btn.disabled = true; // Deshabilita el botón
+            btn.textContent = 'Guardando...'; // Cambia el texto del botón
+        });
+    });
+});
+
 </script>
 
 
