@@ -276,7 +276,6 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
 
     function agregarProductoSeleccionado(producto) {
     if (productosSeleccionados[producto.nombre]) return; // Evita agregar el producto si ya está seleccionado
-    
 
     var fila = tablaSeleccionados.insertRow();
     fila.insertCell().textContent = producto.nombre;
@@ -291,19 +290,54 @@ document.getElementById('montopagar').addEventListener('input', actualizarDifere
     celdaTotal.textContent = "$" + totalProducto.toFixed(0);
 
     fila.insertCell().textContent = producto.categoria;
+
+    // Celda para las acciones
+    var celdaAcciones = fila.insertCell();
+
+    // Botón para editar cantidad
     var btnEditar = document.createElement('button');
     btnEditar.textContent = 'Editar Cantidad';
     btnEditar.className = 'btn btn-primary';
-    btnEditar.style.fontSize = '12px'; // Reducir tamaño de letra del botón
+    btnEditar.style.fontSize = '12px';
     btnEditar.dataset.producto = JSON.stringify(producto); // Almacenar el producto en el botón
     btnEditar.onclick = function() {
         editarCantidad(this);
     };
-    fila.insertCell().appendChild(btnEditar);
+    celdaAcciones.appendChild(btnEditar);
+
+    // Añadir un pequeño espacio entre botones
+    var espacio = document.createTextNode(' ');
+    celdaAcciones.appendChild(espacio);
+
+    // Añadir botón "Quitar"
+    var btnQuitar = document.createElement('button');
+    btnQuitar.textContent = 'Quitar';
+    btnQuitar.className = 'btn btn-danger';
+    btnQuitar.style.fontSize = '12px';
+    btnQuitar.onclick = function() {
+        quitarProductoSeleccionado(this);
+    };
+    celdaAcciones.appendChild(btnQuitar);
 
     productosSeleccionados[producto.nombre] = true; // Marca el producto como seleccionado
     calcularTotal();
 }
+
+
+function quitarProductoSeleccionado(btn) {
+    var fila = btn.parentNode.parentNode;
+    var nombreProducto = fila.cells[0].textContent; // Obtener el nombre del producto de la fila
+
+    // Eliminar la fila de la tabla
+    fila.parentNode.removeChild(fila);
+
+    // Actualizar el estado de seleccionado del producto
+    delete productosSeleccionados[nombreProducto];
+
+    // Recalcular el total si es necesario
+    calcularTotal();
+}
+
 
 
 
