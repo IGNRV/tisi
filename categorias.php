@@ -118,62 +118,30 @@ if (isset($_SESSION['id'])) {
     }
 
     $query = "SELECT id_categoria, nombre_categoria FROM categorias WHERE id_usuario = ?";
-    if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("i", $id_usuario);
-        $stmt->execute();
-        $result = $stmt->get_result();
+if ($stmt = $conn->prepare($query)) {
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        if ($mensaje_exito != '') {
-            echo "<p class='alert alert-success'>" . $mensaje_exito . "</p>";
-        }
-
-        if ($result->num_rows > 0) {
-            echo '<div class="form-group">';
-            echo '<select class="form-control" id="categoriaSelect" name="categoria"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>';
-            while ($row = $result->fetch_assoc()) {
-                echo '<option value="' . $row['id_categoria'] . '">' . htmlspecialchars($row['nombre_categoria']) . '</option>';
-            }
-            echo '</select>';
-            echo '</div>';
-
-            echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>Editar</button>';
-
-            echo '
-            <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="editCategoryModalLabel">Editar Categoría</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="editCategoryForm" method="post">
-                      <div class="form-group">
-                        <label for="categoryName">Nombre de la Categoría</label>
-                        <input type="text" class="form-control" id="categoryName" name="nombre_categoria">
-                        <input type="hidden" id="categoryId" name="id_categoria">
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" onclick="eliminarCategoria()">Eliminar</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>';
-
-            
-        } else {
-            echo 'No hay categorías disponibles.';
-        }
-        $stmt->close();
-    } else {
-        echo "Error al preparar la consulta: " . $conn->error;
+    // Mostrar las categorías en una tabla
+    echo '<table class="table">';
+    echo '<thead><tr><th>Nombre de la Categoría</th><th>Acciones</th></tr></thead>';
+    echo '<tbody>';
+    while ($row = $result->fetch_assoc()) {
+        echo '<tr>';
+        echo '<td>' . htmlspecialchars($row['nombre_categoria']) . '</td>';
+        echo '<td>';
+        echo '<button class="btn btn-primary" data-toggle="modal" data-target="#editCategoryModal" onclick="setEditModalValues(\'' . $row['id_categoria'] . '\', \'' . htmlspecialchars($row['nombre_categoria'], ENT_QUOTES) . '\')">Editar</button>';
+        echo ' ';
+        echo '<button class="btn btn-danger" onclick="eliminarCategoria(\'' . $row['id_categoria'] . '\')">Eliminar</button>';
+        echo '</td>';
+        echo '</tr>';
     }
+    echo '</tbody></table>';
+    $stmt->close();
+} else {
+    echo "Error al preparar la consulta: " . $conn->error;
+}
     echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategoryModal"' . ($estadoSuscripcion == 0 ? ' disabled' : '') . '>Agregar categoría</button>';
     echo '
     <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
@@ -200,6 +168,33 @@ if (isset($_SESSION['id'])) {
         </div>
       </div>
     </div>';
+
+    echo '
+            <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editCategoryModalLabel">Editar Categoría</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="editCategoryForm" method="post">
+                      <div class="form-group">
+                        <label for="categoryName">Nombre de la Categoría</label>
+                        <input type="text" class="form-control" id="categoryName" name="nombre_categoria">
+                        <input type="hidden" id="categoryId" name="id_categoria">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>';
 } else {
     echo "Usuario no autenticado.";
 }
@@ -252,24 +247,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function eliminarCategoria() {
-    var categoryIdInput = document.getElementById('categoryId');
-    if (categoryIdInput && categoryIdInput.value) {
-        var confirmacion = confirm("¿Estás seguro de que deseas eliminar esta categoría?");
-        if (confirmacion) {
-            var form = document.createElement('form');
-            form.method = 'post';
-            form.action = '';
+function setEditModalValues(id, name) {
+    document.getElementById('categoryId').value = id;
+    document.getElementById('categoryName').value = name;
+}
 
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'eliminar_categoria';
-            input.value = categoryIdInput.value;
+function eliminarCategoria(id) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.action = ''; // Aquí puedes establecer el script PHP que manejará la eliminación
 
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
-        }
+        var inputId = document.createElement('input');
+        inputId.type = 'hidden';
+        inputId.name = 'eliminar_categoria';
+        inputId.value = id;
+
+        form.appendChild(inputId);
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 </script>
