@@ -188,7 +188,7 @@ if ($stmt = $conn->prepare($query)) {
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="submit" class="btn btn-primary" id="saveChangesBtn">Guardar Cambios</button>
                       </div>
                     </form>
                   </div>
@@ -268,4 +268,18 @@ function eliminarCategoria(id) {
         form.submit();
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    var saveChangesBtn = document.getElementById('saveChangesBtn');
+
+    // Asegúrate de que el botón existe en el DOM
+    if (saveChangesBtn) {
+        saveChangesBtn.form.addEventListener('submit', function() {
+            // Deshabilita el botón para prevenir envíos múltiples
+            saveChangesBtn.disabled = true;
+            // Cambia el texto del botón, opcionalmente
+            saveChangesBtn.textContent = 'Guardando...';
+        });
+    }
+});
+
 </script>
