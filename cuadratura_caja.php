@@ -228,17 +228,14 @@ document.getElementById('generarPdf').addEventListener('click', function() {
         let filas = tabla.querySelectorAll('tbody tr');
         let datosTabla = [];
 
-        // Agregar el nombre del medio de pago al inicio de cada conjunto de datos de tabla
-        let nombreMedioPago = tabla.previousSibling.textContent; // Asume que es el elemento inmediatamente antes de la tabla
+        let nombreMedioPago = tabla.previousSibling.textContent;
         datosTabla.push([nombreMedioPago]);
-        // Agregar encabezados
         let datosEncabezados = [];
         encabezados.forEach(encabezado => {
             datosEncabezados.push(encabezado.textContent);
         });
         datosTabla.push(datosEncabezados);
 
-        // Agregar filas
         filas.forEach(fila => {
             let celdas = fila.querySelectorAll('td');
             let datosFila = [];
@@ -248,10 +245,13 @@ document.getElementById('generarPdf').addEventListener('click', function() {
             datosTabla.push(datosFila);
         });
 
+        // Obtener el total acumulado de la tabla
+        let totalAcumulado = tabla.nextSibling.textContent;
+        datosTabla.push([/* 'Total acumulado con IVA',  */totalAcumulado]);
+
         datosParaPdf.push(datosTabla);
     });
 
-    // Enviar los datos al servidor para generar el PDF
     fetch('generar_pdf_cuadratura.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -259,7 +259,6 @@ document.getElementById('generarPdf').addEventListener('click', function() {
     })
     .then(response => response.blob())
     .then(blob => {
-        // Crear un enlace temporal para descargar el PDF
         let url = window.URL.createObjectURL(blob);
         let a = document.createElement('a');
         a.href = url;
@@ -271,6 +270,5 @@ document.getElementById('generarPdf').addEventListener('click', function() {
     })
     .catch(error => console.error('Error:', error));
 });
-
 
 </script>
