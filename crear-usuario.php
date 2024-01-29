@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Crear Usuario</title>
-    <link rel="alternate" href="https://trackitsellit.oralisisdataservice.cl/crear_usuario.php" hreflang="es"/>
+    <link rel="alternate" href="https://trackitsellit.oralisisdataservice.cl/crear-usuario.php" hreflang="es"/>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Asegúrate de incluir esta etiqueta para la responsividad -->
@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php if (isset($_SESSION['error_message'])): ?>
                 <div class='alert alert-danger'><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?></div>
             <?php endif; ?>
-            <form action="crear_usuario.php" method="post">
+            <form action="crear-usuario.php" method="post">
                 <div class="form-group">
             <label>Usuario:</label>
             <input type="text" name="usuario" class="form-control" required>

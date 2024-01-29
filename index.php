@@ -109,10 +109,10 @@ $conn->close();
                 <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
             </form>
             <div class="mt-3">
-                <a href="recuperar_contrasena.php" class="btn btn-warning btn-block">Recuperar Contraseña</a>
+                <a href="recuperar-contrasena.php" class="btn btn-warning btn-block">Recuperar Contraseña</a>
                 </div>
         <div class="mt-3">
-            <a href="https://trackitsellit.oralisisdataservice.cl/crear_usuario.php" class="btn btn-secondary btn-block">Crear Usuario</a>
+            <a href="https://trackitsellit.oralisisdataservice.cl/crear-usuario.php" class="btn btn-secondary btn-block">Crear Usuario</a>
         </div>
     </div>
 </div>

@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <h1 class="mt-5">Recuperar Contraseña</h1>
-            <form method="post" action="recuperar_contrasena.php" class="mt-4">
+            <form method="post" action="recuperar-contrasena.php" class="mt-4">
                 <div class="form-group">
                     <label for="email">Correo Electrónico:</label>
                     <input type="email" id="email" name="email" class="form-control" required>
