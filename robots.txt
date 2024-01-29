@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /db.php
+Disallow: /vendor/
+
+Sitemap: https://trackitsellit.oralisisdataservice.cl/sitemap.xml

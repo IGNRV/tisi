@@ -71,6 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Recuperar Contraseña</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Restablece tu contraseña de Track It / Sell It con facilidad. Nuestro proceso seguro de recuperación de contraseñas te ayuda a retomar rápidamente el control de tu gestión de inventario y ventas. Recupera el acceso a tu cuenta de forma segura y continúa optimizando tu negocio.">
 </head>
 <body>
