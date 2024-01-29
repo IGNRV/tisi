@@ -71,12 +71,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Recuperar Contraseña</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="description" content="Restablece tu contraseña de Track It / Sell It con facilidad. Nuestro proceso seguro de recuperación de contraseñas te ayuda a retomar rápidamente el control de tu gestión de inventario y ventas. Recupera el acceso a tu cuenta de forma segura y continúa optimizando tu negocio.">
 </head>
 <body>
 <div class="container">
     <div class="row">
         <div class="col-md-6 offset-md-3">
-            <h2 class="mt-5">Recuperar Contraseña</h2>
+            <h1 class="mt-5">Recuperar Contraseña</h1>
             <form method="post" action="recuperar_contrasena.php" class="mt-4">
                 <div class="form-group">
                     <label for="email">Correo Electrónico:</label>

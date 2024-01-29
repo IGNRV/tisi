@@ -104,16 +104,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Crear Usuario</title>
+    <link rel="alternate" href="https://trackitsellit.oralisisdataservice.cl/crear_usuario.php" hreflang="es"/>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Asegúrate de incluir esta etiqueta para la responsividad -->
+    <meta name="description" content="Únete a Track It / Sell It y comienza a transformar la manera en que gestionas tu inventario y procesas tus ventas. Regístrate en minutos y descubre herramientas potentes y personalizables para impulsar el éxito de tu negocio. ¡Crea tu cuenta hoy y simplifica tus operaciones comerciales!">
 </head>
 <body>
 
 <div class="container mt-5"> <!-- mt-5 añade un poco de espacio en la parte superior -->
     <div class="row">
         <div class="col-md-8 col-lg-6 mx-auto"> <!-- Centrar el formulario y hacerlo más estrecho en pantallas grandes -->
-            <h2 class="mb-4 text-center">Crear Usuario</h2>
+            <h1 class="mb-4 text-center">Crear Usuario</h1>
             <?php if (isset($_SESSION['error_message'])): ?>
                 <div class='alert alert-danger'><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?></div>
             <?php endif; ?>

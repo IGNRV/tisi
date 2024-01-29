@@ -67,10 +67,12 @@ $conn->close();
 <html>
 <head>
     <title>Inicia sesión - Track It / Sell It</title>
+    <link rel="alternate" href="https://trackitsellit.oralisisdataservice.cl/" hreflang="es"/>
     <!-- Incluir CSS de Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Accede a Track It / Sell It para gestionar eficientemente tu inventario y ventas. Nuestro sistema seguro y fácil de usar está diseñado para maximizar tu productividad. ¡Inicia sesión ahora y lleva tu negocio al siguiente nivel!">
     <style>
         /* Estilo adicional para centrar verticalmente el formulario de inicio de sesión */
         .vertical-center {
@@ -78,6 +80,13 @@ $conn->close();
             display: flex;
             align-items: center;
         }
+        .etiquetah1 {
+    font-size: 0.8rem; /* Ejemplo de tamaño de fuente, ajusta según sea necesario */
+    color: #333; /* Ejemplo de color de texto, ajusta para que coincida con tu esquema de color */
+    margin-bottom: 1rem; /* Espacio debajo del H1 */
+    /* Otros estilos que podrías querer ajustar: peso de la fuente, espaciado de letras, etc. */
+}
+
     </style>
 </head>
 <body>
@@ -86,6 +95,7 @@ $conn->close();
         <div class="col-sm-8 col-md-6 col-lg-4">
             <div class="text-center">
                 <img src="https://trackitsellit.oralisisdataservice.cl/images/logo.png" alt="Logo" class="img-fluid mb-4" style="max-height: 150px;">
+                <h1 class="etiquetah1">Sistema online de inventario y punto de venta</h1>
             </div>
 
             <!-- Formulario de inicio de sesión con estilos Bootstrap -->
