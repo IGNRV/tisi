@@ -1,6 +1,7 @@
 <?php
 require_once 'fpdf/fpdf.php'; // Asegúrate de que este es el camino correcto a FPDF
 require_once 'db.php'; // Asume que db.php contiene la conexión a la base de datos
+ob_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -16,7 +17,7 @@ $medioPago = urldecode($_GET['medioPago']); // Asegúrate de decodificar el valo
 $total = isset($_GET['total']) ? floatval($_GET['total']) : 0;
 $diferencia = isset($_GET['diferencia']) ? floatval($_GET['diferencia']) : 0;
 $productosVendidos = json_decode($_GET['productosVendidos'], true);
-$montoPagadoCliente = $_SESSION['montoPagadoCliente'];
+$montoPagadoCliente = isset($_SESSION['montoPagadoCliente']) ? floatval($_SESSION['montoPagadoCliente']) : 0;
 $montoAdicional = isset($_GET['montoAdicional']) ? floatval($_GET['montoAdicional']) : 0;
 
 
@@ -106,7 +107,7 @@ header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="boleta.pdf"');
 header('Pragma: no-cache');
 header('Expires: 0');
-
+ob_end_clean();
 // Salida del PDF
 $pdf->Output('D', 'boleta.pdf');
 exit;

@@ -132,6 +132,9 @@ if ($stmt = $conn->prepare($nombreQuery)) {
                     case 'historial':
                         include 'historial.php';
                         break;
+                    case 'nuevo-usuario':
+                        include 'nuevo-usuario.php';
+                        break;
                     default:
                         include 'buscar_productos.php';
                         break;
