@@ -3,6 +3,12 @@
 require_once 'db.php';
 session_start();
 
+if (isset($_SESSION['success_message'])) {
+    echo "<div class='alert alert-success' role='alert'>" . $_SESSION['success_message'] . "</div>";
+    // Quitar el mensaje de éxito de la sesión
+    unset($_SESSION['success_message']);
+}
+
 // Consultar el estado de suscripción del usuario actual
 $estadoSuscripcion = 0; // Valor predeterminado
 if (isset($_SESSION['id'])) {
